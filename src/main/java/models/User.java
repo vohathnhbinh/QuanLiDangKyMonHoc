@@ -1,10 +1,16 @@
 package models;
+
 import javax.persistence.*;
+import java.io.Serializable;
+
+enum Role {
+    STUDENT, STAFF
+}
 
 @Entity
 @Table(name = "user")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class User {
+public class User implements Serializable {
     @Id @Column(name = "user_id")
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     protected int user_id;
@@ -12,9 +18,11 @@ public class User {
     protected String username;
     protected String password;
     protected String fullname;
-    protected int role;
 
-    public User(int user_id, String username, String password, String fullname, int role) {
+    @Enumerated(EnumType.STRING)
+    protected Role role;
+
+    public User(int user_id, String username, String password, String fullname, Role role) {
         this.user_id = user_id;
         this.username = username;
         this.password = password;
@@ -54,11 +62,11 @@ public class User {
         this.fullname = fullname;
     }
 
-    public int getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(int role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 }

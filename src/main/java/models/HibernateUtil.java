@@ -5,12 +5,12 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
-public class HibernateAnnotationUtil {
+public class HibernateUtil {
     private static SessionFactory sessionFactory;
 
     private SessionFactory buildSessionFactory() {
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().
-                configure("hibernate-annotation.cfg.xml").build();
+                configure("./resources/hibernate-annotation.cfg.xml").build();
         Metadata metadata = new MetadataSources(serviceRegistry).getMetadataBuilder().build();
         SessionFactory sessionFactory = metadata.getSessionFactoryBuilder().build();
 
