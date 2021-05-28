@@ -15,12 +15,16 @@ public class User implements Serializable {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     protected int user_id;
 
+    @Column(unique = true)
     protected String username;
+
     protected String password;
     protected String fullname;
 
     @Enumerated(EnumType.STRING)
     protected Role role;
+
+    public User() {}
 
     public User(int user_id, String username, String password, String fullname, Role role) {
         this.user_id = user_id;

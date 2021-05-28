@@ -7,7 +7,7 @@ import java.util.Date;
 @Entity
 @Table(name = "class")
 
-public class Session implements Serializable {
+public class RegSession implements Serializable {
     @Id
     @Column(name = "session_id")
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -20,7 +20,10 @@ public class Session implements Serializable {
     private Date begin_date;
     private Date expired_date;
 
-    public Session(int session_id, Semester semester, Date begin_date, Date expired_date) {
+    public RegSession() {
+    }
+
+    public RegSession(int session_id, Semester semester, Date begin_date, Date expired_date) {
         this.session_id = session_id;
         this.semester = semester;
         this.begin_date = begin_date;

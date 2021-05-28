@@ -13,6 +13,9 @@ public class StudentCourseKey implements Serializable {
     @Column(name = "course_id")
     private int course_id;
 
+    public StudentCourseKey() {
+    }
+
     public StudentCourseKey(int user_id, int course_id) {
         this.user_id = user_id;
         this.course_id = course_id;

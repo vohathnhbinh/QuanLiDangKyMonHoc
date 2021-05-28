@@ -2,6 +2,8 @@ package models;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 
 enum Gender {
@@ -21,14 +23,16 @@ public class Student extends User{
     private Class myClass;
 
     @OneToMany(mappedBy = "student")
-    Set<Student_Course> stu_cours = new HashSet<>();
+    Set<Student_Course> courses = new HashSet<>();
 
-    public Student(int user_id, String username, String password, String fullname, Role role, String student_number, Gender gender, Class myClass, Set<Student_Course> stu_cours) {
+    public Student() {}
+
+    public Student(int user_id, String username, String password, String fullname, Role role, String student_number, Gender gender, Class myClass, Set<Student_Course> courses) {
         super(user_id, username, password, fullname, role);
         this.student_number = student_number;
         this.gender = gender;
         this.myClass = myClass;
-        this.stu_cours = stu_cours;
+        this.courses = courses;
     }
 
     public String getStudent_number() {
@@ -55,11 +59,45 @@ public class Student extends User{
         this.myClass = myClass;
     }
 
-    public Set<Student_Course> getStu_cours() {
-        return stu_cours;
+    public Set<Student_Course> getCourses() {
+        return courses;
     }
 
-    public void setStu_cours(Set<Student_Course> stu_cours) {
-        this.stu_cours = stu_cours;
+    public void setCourses(Set<Student_Course> courses) {
+        this.courses = courses;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Student student = (Student) o;
+        return Objects.equals(student_number, student.student_number) && gender == student.gender && Objects.equals(myClass, student.myClass) && Objects.equals(courses, student.courses);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(student_number, gender, myClass, courses);
+    }
+
+    public void addCourse(Course course) {
+        Student_Course studentCourse = new Student_Course(this, course);
+        courses.add(studentCourse);
+        course.getStudents().add(studentCourse);
+    }
+
+    public void removeCourse(Course course) {
+        for (Iterator<Student_Course> iterator = courses.iterator();
+             iterator.hasNext(); ) {
+            Student_Course studentCourse = iterator.next();
+
+            if (studentCourse.getStudent().equals(this) &&
+                    studentCourse.getCourse().equals(course)) {
+                iterator.remove();
+                studentCourse.getCourse().getStudents().remove(studentCourse);
+                studentCourse.setStudent(null);
+                studentCourse.setCourse(null);
+            }
+        }
     }
 }

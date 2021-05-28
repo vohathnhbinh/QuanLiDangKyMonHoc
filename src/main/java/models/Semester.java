@@ -23,16 +23,19 @@ public class Semester implements Serializable {
     private Set<Course> courses = new HashSet<>();
 
     @OneToMany(mappedBy = "semester")
-    private Set<Session> sessions = new HashSet<>();
+    private Set<RegSession> regSessions = new HashSet<>();
 
-    public Semester(int semester_id, String name, String school_year, Date start_date, Date end_date, Set<Course> courses, Set<Session> sessions) {
+    public Semester() {
+    }
+
+    public Semester(int semester_id, String name, String school_year, Date start_date, Date end_date, Set<Course> courses, Set<RegSession> regSessions) {
         this.semester_id = semester_id;
         this.name = name;
         this.school_year = school_year;
         this.start_date = start_date;
         this.end_date = end_date;
         this.courses = courses;
-        this.sessions = sessions;
+        this.regSessions = regSessions;
     }
 
     public int getSemester_id() {
@@ -83,11 +86,11 @@ public class Semester implements Serializable {
         this.courses = courses;
     }
 
-    public Set<Session> getSessions() {
-        return sessions;
+    public Set<RegSession> getSessions() {
+        return regSessions;
     }
 
-    public void setSessions(Set<Session> sessions) {
-        this.sessions = sessions;
+    public void setSessions(Set<RegSession> regSessions) {
+        this.regSessions = regSessions;
     }
 }

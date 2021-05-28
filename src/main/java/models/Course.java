@@ -3,6 +3,7 @@ package models;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 enum Date_of_week {
@@ -54,9 +55,12 @@ public class Course implements Serializable {
     private int max_slot;
 
     @OneToMany(mappedBy = "course")
-    Set<Student_Course> stu_cours = new HashSet<>();
+    Set<Student_Course> students = new HashSet<>();
 
-    public Course(int course_id, Semester semester, Subject subject, String teacher_name, String classroom, Date_of_week date_of_week, Shift shift, int max_slot, Set<Student_Course> stu_cours) {
+    public Course() {
+    }
+
+    public Course(int course_id, Semester semester, Subject subject, String teacher_name, String classroom, Date_of_week date_of_week, Shift shift, int max_slot, Set<Student_Course> students) {
         this.course_id = course_id;
         this.semester = semester;
         this.subject = subject;
@@ -65,7 +69,7 @@ public class Course implements Serializable {
         this.date_of_week = date_of_week;
         this.shift = shift;
         this.max_slot = max_slot;
-        this.stu_cours = stu_cours;
+        this.students = students;
     }
 
     public int getCourse_id() {
@@ -132,11 +136,24 @@ public class Course implements Serializable {
         this.max_slot = max_slot;
     }
 
-    public Set<Student_Course> getStu_cours() {
-        return stu_cours;
+    public Set<Student_Course> getStudents() {
+        return students;
     }
 
-    public void setStu_cours(Set<Student_Course> stu_cours) {
-        this.stu_cours = stu_cours;
+    public void setStudents(Set<Student_Course> students) {
+        this.students = students;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Course course = (Course) o;
+        return course_id == course.course_id && max_slot == course.max_slot && Objects.equals(semester, course.semester) && Objects.equals(subject, course.subject) && Objects.equals(teacher_name, course.teacher_name) && Objects.equals(classroom, course.classroom) && date_of_week == course.date_of_week && shift == course.shift && Objects.equals(students, course.students);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(course_id, semester, subject, teacher_name, classroom, date_of_week, shift, max_slot, students);
     }
 }

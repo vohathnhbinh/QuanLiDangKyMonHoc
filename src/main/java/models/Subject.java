@@ -20,6 +20,9 @@ public class Subject implements Serializable {
     @OneToMany(mappedBy = "subject")
     private Set<Course> courses = new HashSet<>();
 
+    public Subject() {
+    }
+
     public Subject(int subject_id, String subject_number, String subject_name, int credit_amount, Set<Course> courses) {
         this.subject_id = subject_id;
         this.subject_number = subject_number;

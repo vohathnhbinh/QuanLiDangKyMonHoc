@@ -13,6 +13,7 @@ public class Class implements Serializable {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int class_id;
 
+    private String class_name;
     private int class_size = 0;
     private int male_size = 0;
     private int female_size = 0;
@@ -20,8 +21,12 @@ public class Class implements Serializable {
     @OneToMany(mappedBy = "myClass")
     private Set<Student> students = new HashSet<>();
 
-    public Class(int class_id, Set<Student> students) {
+    public Class() {
+    }
+
+    public Class(int class_id, String class_name, Set<Student> students) {
         this.class_id = class_id;
+        this.class_name = class_name;
         this.students = students;
         setClass_size();
         setMale_size();
@@ -34,6 +39,14 @@ public class Class implements Serializable {
 
     public void setClass_id(int class_id) {
         this.class_id = class_id;
+    }
+
+    public String getClass_name() {
+        return class_name;
+    }
+
+    public void setClass_name(String class_name) {
+        this.class_name = class_name;
     }
 
     public int getClass_size() {
