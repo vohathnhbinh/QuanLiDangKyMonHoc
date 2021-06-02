@@ -6,10 +6,6 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 
-enum Gender {
-    MALE, FEMALE
-}
-
 @Entity
 @Table(name = "student")
 public class Student extends User{
@@ -27,8 +23,14 @@ public class Student extends User{
 
     public Student() {}
 
-    public Student(int user_id, String username, String password, String fullname, Role role, String student_number, Gender gender, Class myClass, Set<Student_Course> courses) {
-        super(user_id, username, password, fullname, role);
+    public Student(String fullname, Class myClass, Gender gender) {
+        super(fullname, Role.STUDENT);
+        this.myClass = myClass;
+        this.gender = gender;
+    }
+
+    public Student(int user_id, String username, String password, String fullname, String student_number, Gender gender, Class myClass, Set<Student_Course> courses) {
+        super(user_id, username, password, fullname, Role.STUDENT);
         this.student_number = student_number;
         this.gender = gender;
         this.myClass = myClass;

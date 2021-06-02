@@ -10,8 +10,8 @@ public class Staff extends User{
     public Staff() {
     }
 
-    public Staff(int user_id, String username, String password, String fullname, Role role, String staff_number) {
-        super(user_id, username, password, fullname, role);
+    public Staff(int user_id, String username, String password, String fullname, String staff_number) {
+        super(user_id, username, password, fullname, Role.STAFF);
         this.staff_number = staff_number;
     }
 

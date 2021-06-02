@@ -1,7 +1,10 @@
 package app;
 
+import daos.ClassDao;
 import daos.StudentDao;
+import models.Gender;
 import models.Student;
+import models.Class;
 
 import java.util.List;
 
@@ -9,13 +12,9 @@ public class App
 {
     public static void main( String[] args )
     {
-        List<Student> students = StudentDao.getAll();
-        for (Student student : students) {
-            System.out.println(student.getStudent_number());
-            System.out.println(student.getFullname());
-            System.out.println(student.getUsername());
-            System.out.println(student.getMyClass().getClass_name());
-            System.out.println("\n");
-        }
+        Class theirClass = ClassDao.findOne("18CTT2", "class_name");
+        Student student = new Student("Nguyen Thi B", theirClass, Gender.FEMALE);
+        StudentDao.add(student);
+        System.out.println(student.getStudent_number());
     }
 }
