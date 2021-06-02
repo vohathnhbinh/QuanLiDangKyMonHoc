@@ -1,5 +1,8 @@
 package models;
 
+import additionals.Gender;
+import additionals.Role;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -15,7 +18,7 @@ public class Student extends User{
     private Gender gender;
 
     @ManyToOne
-    @JoinColumn(name="class_id", nullable = false)
+    @JoinColumn(name="class_id")
     private Class myClass;
 
     @OneToMany(mappedBy = "student")

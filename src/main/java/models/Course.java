@@ -1,31 +1,13 @@
 package models;
 
+import additionals.Date_of_week;
+import additionals.Shift;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-
-enum Date_of_week {
-    MON, TUE, WED, THU, FRI, SAT, SUN
-}
-
-enum Shift {
-    ONE("7:30-9:30"),
-    TWO("9:30-11:30"),
-    THREE("13:30-15:30"),
-    FOUR("15:30-17:30");
-
-    private String shift_time;
-
-    Shift(String shift_time) {
-        this.shift_time = shift_time;
-    }
-
-    public String getShift_time() {
-        return this.shift_time;
-    }
-}
 
 @Entity
 @Table(name = "course")

@@ -2,7 +2,7 @@ package models;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
@@ -21,16 +21,16 @@ public class Student_Course implements Serializable {
     @JoinColumn(name = "course_id")
     Course course;
 
-    private Date createOn = new Date(System.currentTimeMillis());
+    private Timestamp create_on;
 
     public Student_Course() {
     }
 
-    public Student_Course(StudentCourseKey id, Student student, Course course, Date createOn) {
+    public Student_Course(StudentCourseKey id, Student student, Course course, Timestamp create_on) {
         this.id = id;
         this.student = student;
         this.course = course;
-        this.createOn = createOn;
+        this.create_on = create_on;
     }
 
     public Student_Course(Student student, Course course) {
@@ -63,12 +63,12 @@ public class Student_Course implements Serializable {
         this.course = course;
     }
 
-    public Date getCreateOn() {
-        return createOn;
+    public Timestamp getcreate_on() {
+        return create_on;
     }
 
-    public void setCreateOn(Date createOn) {
-        this.createOn = createOn;
+    public void setcreate_on(Timestamp create_on) {
+        this.create_on = create_on;
     }
 
     @Override
@@ -76,11 +76,11 @@ public class Student_Course implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Student_Course that = (Student_Course) o;
-        return Objects.equals(id, that.id) && Objects.equals(student, that.student) && Objects.equals(course, that.course) && Objects.equals(createOn, that.createOn);
+        return Objects.equals(id, that.id) && Objects.equals(student, that.student) && Objects.equals(course, that.course) && Objects.equals(create_on, that.create_on);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, student, course, createOn);
+        return Objects.hash(id, student, course, create_on);
     }
 }

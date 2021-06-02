@@ -1,11 +1,9 @@
 package models;
 
+import additionals.Role;
+
 import javax.persistence.*;
 import java.io.Serializable;
-
-enum Role {
-    STUDENT, STAFF
-}
 
 @Entity
 @Table(name = "user")

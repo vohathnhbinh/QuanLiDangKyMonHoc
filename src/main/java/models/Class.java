@@ -1,5 +1,7 @@
 package models;
 
+import additionals.Gender;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -63,7 +65,7 @@ public class Class implements Serializable {
 
     public void setMale_size() {
         for (Student student : this.students) {
-            if (student.getGender().equals("MALE"))
+            if (student.getGender().equals(Gender.MALE))
                 ++this.male_size;
         }
     }
@@ -74,8 +76,8 @@ public class Class implements Serializable {
 
     public void setFemale_size() {
         for (Student student : this.students) {
-            if (student.getGender().equals("FEMALE"))
-                ++this.male_size;
+            if (student.getGender().equals(Gender.FEMALE))
+                ++this.female_size;
         }
     }
 

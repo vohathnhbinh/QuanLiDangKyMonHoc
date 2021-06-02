@@ -1,5 +1,7 @@
 package models;
 
+import additionals.Role;
+
 import javax.persistence.*;
 
 @Entity

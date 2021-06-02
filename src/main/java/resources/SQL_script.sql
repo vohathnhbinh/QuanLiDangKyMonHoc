@@ -6,7 +6,8 @@ CREATE TABLE IF NOT EXISTS user (
     username NVARCHAR(20),
     password VARCHAR(20),
     fullname NVARCHAR(50),
-    role ENUM('STUDENT', 'STAFF')
+    role ENUM('STUDENT', 'STAFF'),
+    UNIQUE key (username)
 );
 
 CREATE TABLE IF NOT EXISTS student (
@@ -47,9 +48,10 @@ CREATE TABLE IF NOT EXISTS semester (
 
 CREATE TABLE IF NOT EXISTS class (
 	class_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    class_size INT,
-    male_size INT,
-    female_size INT
+    class_name varchar(10),
+    class_size INT default 0,
+    male_size INT default 0,
+    female_size INT default 0
 );
 
 CREATE TABLE IF NOT EXISTS course (
@@ -73,6 +75,16 @@ CREATE TABLE IF NOT EXISTS session (
 CREATE TABLE IF NOT EXISTS student_course (
 	user_id INT NOT NULL REFERENCES student (user_id),
     course_id INT NOT NULL REFERENCES course (course_id),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    create_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (user_id, course_id)
 );
+
+insert into user (username, password, fullname, role) values
+("binh123", "howdareyou", "Võ Hạ Thanh Bình", "STUDENT"),
+("caubengoknghek", "helpmepls", "Nguyễn Văn A", "STUDENT");
+
+insert into class (class_name) values ("18CTT2");
+
+insert into student (user_id, gender, class_id) values
+(1, "MALE", 1),
+(2, "MALE", 1);
