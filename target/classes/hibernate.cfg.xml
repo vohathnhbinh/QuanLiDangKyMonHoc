@@ -22,5 +22,6 @@
         <mapping class="models.RegSession" />
         <mapping class="models.StudentCourseKey" />
         <mapping class="models.Student_Course" />
+        <mapping class="models.Teacher" />
     </session-factory>
 </hibernate-configuration>

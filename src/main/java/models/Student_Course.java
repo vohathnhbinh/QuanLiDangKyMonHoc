@@ -11,12 +11,12 @@ public class Student_Course implements Serializable {
     @EmbeddedId
     StudentCourseKey id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("user_id")
     @JoinColumn(name = "user_id")
     Student student;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("course_id")
     @JoinColumn(name = "course_id")
     Course course;
@@ -81,6 +81,6 @@ public class Student_Course implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, student, course, create_on);
+        return Objects.hash(id, create_on);
     }
 }

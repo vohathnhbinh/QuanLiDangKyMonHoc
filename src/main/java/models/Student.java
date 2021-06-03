@@ -17,11 +17,11 @@ public class Student extends User{
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="class_id")
     private Class myClass;
 
-    @OneToMany(mappedBy = "student")
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<Student_Course> courses = new HashSet<>();
 
     public Student() {}
@@ -82,7 +82,7 @@ public class Student extends User{
 
     @Override
     public int hashCode() {
-        return Objects.hash(student_number, gender, myClass, courses);
+        return Objects.hash(student_number, gender);
     }
 
     public void addCourse(Course course) {
@@ -95,9 +95,8 @@ public class Student extends User{
         for (Iterator<Student_Course> iterator = courses.iterator();
              iterator.hasNext(); ) {
             Student_Course studentCourse = iterator.next();
-
             if (studentCourse.getStudent().equals(this) &&
-                    studentCourse.getCourse().equals(course)) {
+                    studentCourse.getCourse().getCourse_id() == course.getCourse_id()) {
                 iterator.remove();
                 studentCourse.getCourse().getStudents().remove(studentCourse);
                 studentCourse.setStudent(null);

@@ -2,13 +2,16 @@ package daos;
 
 import additionals.Account_Info;
 import models.Class;
+import models.Course;
 import models.Student;
+import models.Student_Course;
 import org.hibernate.HibernateError;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import java.util.List;
+import java.util.Set;
 
 public class StudentDao {
     private static List<Student> students = null;
@@ -24,7 +27,6 @@ public class StudentDao {
             trans.rollback();
             System.err.println(err);
         }
-
         return students;
     }
 
@@ -36,7 +38,11 @@ public class StudentDao {
             hql += field + " = " + ":" + field;
             Session ss = (Session) HibernateUtil.getSessionFactory().openSession();
             trans = ss.beginTransaction();
-            Query query = ss.createQuery(hql).setParameter(field, cond);
+            Query query = null;
+            if (field.substring(field.length() - 2).equals("id"))
+                query = ss.createQuery(hql).setParameter(field, Integer.parseInt(cond));
+            else
+                query = ss.createQuery(hql).setParameter(field, cond);
             student = (Student) query.uniqueResult();
             trans.commit();
         } catch (HibernateError err) {
@@ -101,5 +107,33 @@ public class StudentDao {
             System.err.println(err);
         }
         return "Update successful!";
+    }
+
+    public static String interactCourse(Student student, Course course, boolean isJoin) {
+        Transaction trans = null;
+        if (isJoin) {
+            Set<Student_Course> courses = student.getCourses();
+            for (Student_Course thisCourse : courses) {
+                if (thisCourse.getCourse().getCourse_id() == course.getCourse_id())
+                    return "Already joined course!";
+            }
+        }
+
+        try {
+            Session ss = (Session) HibernateUtil.getSessionFactory().openSession();
+            trans = ss.beginTransaction();
+            if (isJoin)
+                student.addCourse(course);
+            else
+                student.removeCourse(course);
+            ss.merge(student);
+            trans.commit();
+        } catch (HibernateError err) {
+            trans.rollback();
+            System.err.println(err);
+        }
+        if (isJoin)
+            return "Join course successful";
+        return "Leave course successful";
     }
 }

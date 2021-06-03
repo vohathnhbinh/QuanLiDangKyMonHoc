@@ -54,11 +54,16 @@ CREATE TABLE IF NOT EXISTS class (
     female_size INT default 0
 );
 
+CREATE TABLE IF NOT EXISTS teacher (
+	teacher_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    teacher_name NVARCHAR(50)
+);
+
 CREATE TABLE IF NOT EXISTS course (
 	course_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     semester_id INT REFERENCES semester (semester_id),
     subject_id INT REFERENCES subject (subject_id),
-    teacher_name NVARCHAR(50),
+    teacher_id INT REFERENCES teacher (teacher_id),
     classroom VARCHAR(5),
     date_of_week ENUM('MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'),
     shift ENUM('ONE', 'TWO', 'THREE', 'FOUR'),
@@ -75,7 +80,7 @@ CREATE TABLE IF NOT EXISTS session (
 CREATE TABLE IF NOT EXISTS student_course (
 	user_id INT NOT NULL REFERENCES student (user_id),
     course_id INT NOT NULL REFERENCES course (course_id),
-    create_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    create_on TIMESTAMP,
     PRIMARY KEY (user_id, course_id)
 );
 
@@ -88,3 +93,9 @@ insert into class (class_name) values ("18CTT2");
 insert into student (user_id, gender, class_id) values
 (1, "MALE", 1),
 (2, "MALE", 1);
+
+insert into teacher (teacher_name) values ("Nguyen ABC");
+insert into subject (subject_name, credit_amount) values ("Nhap mon CNPM", 5);
+insert into semester (name, school_year, start_date, end_date) values ("HK1", "2021-2022", '2021-09-01', '2022-02-01');
+insert into course (semester_id, subject_id, teacher_id, classroom, date_of_week, shift, max_slot)
+values (1, 1, 1, "F101", "MON", "ONE", 60);

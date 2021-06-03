@@ -17,15 +17,18 @@ public class Course implements Serializable {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int course_id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="semester_id", nullable=false)
     private Semester semester;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="subject_id", nullable=false)
     private Subject subject;
 
-    private String teacher_name;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="teacher_id", nullable=false)
+    private Teacher teacher;
+
     private String classroom;
 
     @Enumerated(EnumType.STRING)
@@ -42,11 +45,11 @@ public class Course implements Serializable {
     public Course() {
     }
 
-    public Course(int course_id, Semester semester, Subject subject, String teacher_name, String classroom, Date_of_week date_of_week, Shift shift, int max_slot, Set<Student_Course> students) {
+    public Course(int course_id, Semester semester, Subject subject, Teacher teacher, String classroom, Date_of_week date_of_week, Shift shift, int max_slot, Set<Student_Course> students) {
         this.course_id = course_id;
         this.semester = semester;
         this.subject = subject;
-        this.teacher_name = teacher_name;
+        this.teacher = teacher;
         this.classroom = classroom;
         this.date_of_week = date_of_week;
         this.shift = shift;
@@ -78,12 +81,12 @@ public class Course implements Serializable {
         this.subject = subject;
     }
 
-    public String getTeacher_name() {
-        return teacher_name;
+    public Teacher getTeacher() {
+        return teacher;
     }
 
-    public void setTeacher_name(String teacher_name) {
-        this.teacher_name = teacher_name;
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
     }
 
     public String getClassroom() {
@@ -131,11 +134,11 @@ public class Course implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Course course = (Course) o;
-        return course_id == course.course_id && max_slot == course.max_slot && Objects.equals(semester, course.semester) && Objects.equals(subject, course.subject) && Objects.equals(teacher_name, course.teacher_name) && Objects.equals(classroom, course.classroom) && date_of_week == course.date_of_week && shift == course.shift && Objects.equals(students, course.students);
+        return course_id == course.course_id && max_slot == course.max_slot && Objects.equals(semester, course.semester) && Objects.equals(subject, course.subject) && Objects.equals(teacher, course.teacher) && Objects.equals(classroom, course.classroom) && date_of_week == course.date_of_week && shift == course.shift && Objects.equals(students, course.students);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(course_id, semester, subject, teacher_name, classroom, date_of_week, shift, max_slot, students);
+        return Objects.hash(course_id, semester, subject, teacher, classroom, date_of_week, shift, max_slot);
     }
 }
