@@ -136,4 +136,36 @@ public class StudentDao {
             return "Join course successful";
         return "Leave course successful";
     }
+
+    public static List<Student> searchStudent(String student_number, String fullname) {
+        Transaction trans = null;
+        try {
+            Session ss = (Session) HibernateUtil.getSessionFactory().openSession();
+            trans = ss.beginTransaction();
+            String hql = "FROM Student " +
+                    "WHERE (:student_number IS NULL OR student_number = :student_number) AND" +
+                    "(:fullname IS NULL OR LOWER(fullname) LIKE :exfullname)";
+            Query query = ss.createQuery(hql);
+            query.setParameter("student_number", student_number);
+            query.setParameter("fullname", fullname);
+            query.setParameter("exfullname", '%' + fullname.toLowerCase() + '%');
+            students = query.list();
+            trans.commit();
+        } catch (HibernateError err) {
+            trans.rollback();
+            System.err.println(err);
+        }
+        return students;
+    }
+
+    public static Student logIn(String username, String password) {
+        Student student = (Student) findOne(username, "username");
+        if (student != null) {
+            if (password.equals(student.getPassword()))
+                return student;
+            else
+                return null;
+        } else
+            return null;
+    }
 }

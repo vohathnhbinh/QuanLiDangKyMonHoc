@@ -101,4 +101,36 @@ public class StaffDao {
         }
         return "Update successful!";
     }
+
+    public static List<Staff> searchStaff(String staff_number, String fullname) {
+        Transaction trans = null;
+        try {
+            Session ss = (Session) HibernateUtil.getSessionFactory().openSession();
+            trans = ss.beginTransaction();
+            String hql = "FROM Staff " +
+                    "WHERE (:staff_number IS NULL OR staff_number = :staff_number) AND" +
+                    "(:fullname IS NULL OR LOWER(fullname) LIKE :exfullname)";
+            Query query = ss.createQuery(hql);
+            query.setParameter("staff_number", staff_number);
+            query.setParameter("fullname", fullname);
+            query.setParameter("exfullname", '%' + fullname.toLowerCase() + '%');
+            staffs = query.list();
+            trans.commit();
+        } catch (HibernateError err) {
+            trans.rollback();
+            System.err.println(err);
+        }
+        return staffs;
+    }
+
+    public static Staff logIn(String username, String password) {
+        Staff staff = (Staff) findOne(username, "username");
+        if (staff != null) {
+            if (password.equals(staff.getPassword()))
+                return staff;
+            else
+                return null;
+        } else
+            return null;
+    }
 }
