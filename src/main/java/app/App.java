@@ -1,6 +1,7 @@
 package app;
 
 import additionals.Account_Info;
+import additionals.Role;
 import daos.*;
 import additionals.Gender;
 import guis.LogIn;

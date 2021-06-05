@@ -1,6 +1,9 @@
 package guis;
 
+import daos.StaffDao;
 import daos.StudentDao;
+import models.Staff;
+import models.Student;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -27,11 +30,19 @@ public class LogIn extends JFrame {
                 String password = new String(temp);
                 Object user = null;
                 user = StudentDao.logIn(username, password);
-                if (user == null)
-                    JOptionPane.showMessageDialog(getFrame(), "Wrong username or password!");
-                else {
+                if (user == null) {
+                    user = StaffDao.logIn(username, password);
+                    if (user == null)
+                        JOptionPane.showMessageDialog(getFrame(), "Wrong username or password!");
+                    else {
+                        JOptionPane.showMessageDialog(getFrame(), "Logged in successful!");
+                        JFrame home = new HomeStaff((Staff) user);
+                        home.setVisible(true);
+                        getFrame().dispose();
+                    }
+                } else {
                     JOptionPane.showMessageDialog(getFrame(), "Logged in successful!");
-                    JFrame home = new Home(user);
+                    JFrame home = new HomeStudent((Student) user);
                     home.setVisible(true);
                     getFrame().dispose();
                 }
