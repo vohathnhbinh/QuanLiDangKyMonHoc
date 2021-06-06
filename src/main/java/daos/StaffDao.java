@@ -70,6 +70,19 @@ public class StaffDao {
         }
     }
 
+    public static void remove(Staff staff) {
+        Transaction trans = null;
+        try {
+            Session ss = (Session) HibernateUtil.getSessionFactory().openSession();
+            trans = ss.beginTransaction();
+            ss.delete(staff);
+            trans.commit();
+        } catch (HibernateError err) {
+            trans.rollback();
+            System.err.println(err);
+        }
+    }
+
     public static String changeInfo(Staff staff, Account_Info account) {
         Transaction trans = null;
         try {
@@ -108,11 +121,10 @@ public class StaffDao {
             Session ss = (Session) HibernateUtil.getSessionFactory().openSession();
             trans = ss.beginTransaction();
             String hql = "FROM Staff " +
-                    "WHERE (:staff_number IS NULL OR staff_number = :staff_number) AND" +
-                    "(:fullname IS NULL OR LOWER(fullname) LIKE :exfullname)";
+                    "WHERE (staff_number = :staff_number) OR" +
+                    "(LOWER(fullname) LIKE :exfullname)";
             Query query = ss.createQuery(hql);
             query.setParameter("staff_number", staff_number);
-            query.setParameter("fullname", fullname);
             query.setParameter("exfullname", '%' + fullname.toLowerCase() + '%');
             staffs = query.list();
             trans.commit();
