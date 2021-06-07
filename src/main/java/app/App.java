@@ -2,11 +2,14 @@ package app;
 
 import additionals.Account_Info;
 import additionals.Role;
+import additionals.Shift;
 import daos.*;
 import additionals.Gender;
 import guis.LogIn;
 import models.*;
 import models.Class;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

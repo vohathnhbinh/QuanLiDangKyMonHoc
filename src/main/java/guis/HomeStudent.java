@@ -15,7 +15,6 @@ public class HomeStudent extends JFrame{
     private JLabel welcome;
 
     public HomeStudent(final Student user) {
-        this.setTitle("Log In");
         this.setContentPane(mainPanel);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("Manage Courses");

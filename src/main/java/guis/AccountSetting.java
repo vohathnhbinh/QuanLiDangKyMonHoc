@@ -85,7 +85,7 @@ public class AccountSetting extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 String changedUsername = editusernameTF.getText();
                 if (changedUsername.length() == 0) {
-                    JOptionPane.showMessageDialog(getDialog(), "Username is empty!");
+                    JOptionPane.showMessageDialog(getDialog(), "Username trống!");
                     return;
                 }
                 Account_Info accountInfo = new Account_Info();
@@ -116,7 +116,7 @@ public class AccountSetting extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 String changedFullname = editfullnameTF.getText();
                 if (changedFullname.length() == 0) {
-                    JOptionPane.showMessageDialog(getDialog(), "Fullname is empty!");
+                    JOptionPane.showMessageDialog(getDialog(), "Họ tên trống!");
                     return;
                 }
                 Account_Info accountInfo = new Account_Info();

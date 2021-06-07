@@ -23,6 +23,7 @@ public class StudentDao {
             trans = ss.beginTransaction();
             students = ss.createQuery(hql).list();
             trans.commit();
+            ss.close();
         } catch (HibernateError err) {
             trans.rollback();
             System.err.println(err);
@@ -45,6 +46,7 @@ public class StudentDao {
                 query = ss.createQuery(hql).setParameter(field, cond);
             student = (Student) query.uniqueResult();
             trans.commit();
+            ss.close();
         } catch (HibernateError err) {
             trans.rollback();
             System.err.println(err);
@@ -71,6 +73,7 @@ public class StudentDao {
             ss.update(student);
             ss.update(theirClass);
             trans.commit();
+            ss.close();
         } catch (HibernateError err) {
             trans.rollback();
             System.err.println(err);
@@ -86,27 +89,28 @@ public class StudentDao {
                 student.setFullname(account.fullname);
             if (account.username != null) {
                 if (account.username.length() < 6)
-                    return "Username must have more than 6 characters!";
+                    return "Username phải có trên 6 kí tự!";
                 Student anotherStudent = findOne(account.username, "username");
                 if (anotherStudent != null)
-                    return "Username is not available!";
+                    return "Username đã tồn tại!";
                 student.setUsername(account.username);
             }
             if (account.old_password != null) {
                 if (!student.getPassword().equals(account.old_password))
-                    return "Wrong password!";
+                    return "Sai mật khẩu!";
                 if (account.new_password.length() < 6)
-                    return "Password must have more than 6 characters!";
+                    return "Mật khẩu phải có trên 6 kí tự!";
                 if (!account.new_password.equals(account.retype_password))
-                    return "Passwords are not matched!";
+                    return "Mật khẩu không trùng khớp nhau!";
                 student.setPassword(account.new_password);
             }
             ss.merge(student);
             trans.commit();
+            ss.close();
         } catch (HibernateError err) {
             System.err.println(err);
         }
-        return "Update successful!";
+        return "Cập nhật thông tin thành công!";
     }
 
     public static String interactCourse(Student student, Course course, boolean isJoin) {
@@ -115,7 +119,11 @@ public class StudentDao {
             Set<Student_Course> courses = student.getCourses();
             for (Student_Course thisCourse : courses) {
                 if (thisCourse.getCourse().getCourse_id() == course.getCourse_id())
-                    return "Already joined course!";
+                    return "Đã tham gia học phần!";
+                if (thisCourse.getCourse().getDate_of_week().equals(course.getDate_of_week())) {
+                    if (thisCourse.getCourse().getShift().equals(course.getShift()))
+                        return "Kẹt thời gian!";
+                }
             }
         }
 
@@ -128,13 +136,14 @@ public class StudentDao {
                 student.removeCourse(course);
             ss.merge(student);
             trans.commit();
+            ss.close();
         } catch (HibernateError err) {
             trans.rollback();
             System.err.println(err);
         }
         if (isJoin)
-            return "Join course successful";
-        return "Leave course successful";
+            return "Đăng ký học phần thành công";
+        return "Hủy đăng ký học phần thành công";
     }
 
     public static List<Student> searchStudent(String student_number, String fullname) {
@@ -150,6 +159,7 @@ public class StudentDao {
             query.setParameter("exfullname", '%' + fullname.toLowerCase() + '%');
             students = query.list();
             trans.commit();
+            ss.close();
         } catch (HibernateError err) {
             trans.rollback();
             System.err.println(err);

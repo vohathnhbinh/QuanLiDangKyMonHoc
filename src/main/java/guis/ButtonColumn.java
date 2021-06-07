@@ -173,7 +173,6 @@ public class ButtonColumn extends AbstractCellEditor
 			renderButton.setText( value.toString() );
 			renderButton.setIcon( null );
 		}
-
 		return renderButton;
 	}
 

@@ -15,7 +15,7 @@
         <properties>
           <font size="24"/>
           <labelFor value="54077"/>
-          <text value="Password"/>
+          <text value="Mật khẩu"/>
         </properties>
       </component>
       <component id="bd112" class="javax.swing.JTextField" binding="usernametextField">
@@ -53,7 +53,7 @@
           <foreground color="-1"/>
           <margin top="0" left="0" bottom="0" right="0"/>
           <opaque value="true"/>
-          <text value="LOGIN"/>
+          <text value="LOG IN"/>
         </properties>
       </component>
       <component id="1daf5" class="javax.swing.JLabel" binding="usernameLabel">

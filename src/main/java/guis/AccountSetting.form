@@ -25,7 +25,7 @@
         <properties>
           <font size="24"/>
           <labelFor value="83121"/>
-          <text value="Fullname"/>
+          <text value="Họ tên"/>
         </properties>
       </component>
       <component id="83121" class="javax.swing.JTextField" binding="fullnameTextField">
@@ -118,7 +118,7 @@
         </constraints>
         <properties>
           <font size="24"/>
-          <text value="Password"/>
+          <text value="Mật khẩu"/>
         </properties>
       </component>
       <component id="db023" class="javax.swing.JButton" binding="editpasswordButton">
@@ -141,7 +141,7 @@
         <properties>
           <font size="18"/>
           <labelFor value="68317"/>
-          <text value="Old password"/>
+          <text value="Mật khẩu cũ"/>
         </properties>
       </component>
       <component id="74591" class="javax.swing.JLabel" binding="newLabel">
@@ -151,7 +151,7 @@
         <properties>
           <font size="18"/>
           <labelFor value="599fc"/>
-          <text value="New password"/>
+          <text value="Mật khẩu mới"/>
         </properties>
       </component>
       <component id="587e4" class="javax.swing.JLabel" binding="retypeLabel">
@@ -161,7 +161,7 @@
         <properties>
           <font size="18"/>
           <labelFor value="7ee22"/>
-          <text value="Retype password"/>
+          <text value="Nhập lại mật khẩu"/>
         </properties>
       </component>
       <component id="68317" class="javax.swing.JPasswordField" binding="oldField">

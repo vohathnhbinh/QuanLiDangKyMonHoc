@@ -24,13 +24,13 @@
             <properties>
               <inheritsPopupMenu value="false"/>
               <selected value="false"/>
-              <text value="Account Setting"/>
+              <text value="CHỈNH SỬA TÀI KHOẢN"/>
             </properties>
           </component>
           <component id="f748" class="javax.swing.JButton" binding="LOGOUTButton" default-binding="true">
             <constraints/>
             <properties>
-              <text value="LOG OUT"/>
+              <text value="Đăng xuất"/>
             </properties>
           </component>
         </children>
@@ -46,7 +46,7 @@
         </constraints>
         <properties>
           <font size="28"/>
-          <text value="Welcome student "/>
+          <text value="Chào "/>
         </properties>
       </component>
     </children>

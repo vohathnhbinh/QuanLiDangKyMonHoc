@@ -33,15 +33,15 @@ public class LogIn extends JFrame {
                 if (user == null) {
                     user = StaffDao.logIn(username, password);
                     if (user == null)
-                        JOptionPane.showMessageDialog(getFrame(), "Wrong username or password!");
+                        JOptionPane.showMessageDialog(getFrame(), "Sai username hay mật khẩu!");
                     else {
-                        JOptionPane.showMessageDialog(getFrame(), "Logged in successful!");
+                        JOptionPane.showMessageDialog(getFrame(), "Đăng nhập thành công!");
                         JFrame home = new HomeStaff((Staff) user);
                         home.setVisible(true);
                         getFrame().dispose();
                     }
                 } else {
-                    JOptionPane.showMessageDialog(getFrame(), "Logged in successful!");
+                    JOptionPane.showMessageDialog(getFrame(), "Đăng nhập thành công!");
                     JFrame home = new HomeStudent((Student) user);
                     home.setVisible(true);
                     getFrame().dispose();

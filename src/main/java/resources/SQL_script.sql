@@ -31,7 +31,7 @@ FOR EACH ROW SET new.staff_number = CONCAT("GV", LPAD(new.user_id, 3, "0"));
 CREATE TABLE IF NOT EXISTS subject (
 	subject_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     subject_number VARCHAR(10),
-    subject_name NVARCHAR(30),
+    subject_name NVARCHAR(100),
     credit_amount INT
 );
 
@@ -99,3 +99,8 @@ insert into subject (subject_name, credit_amount) values ("Nhap mon CNPM", 5);
 insert into semester (name, school_year, start_date, end_date) values ("HK1", "2021-2022", '2021-09-01', '2022-02-01');
 insert into course (semester_id, subject_id, teacher_id, classroom, date_of_week, shift, max_slot)
 values (1, 1, 1, "F101", "MON", "ONE", 60);
+
+insert into subject (subject_name, credit_amount) VALUES
+("Nhập môn Công nghệ phần mềm", 4),
+("Phát triển ứng dụng web nâng cao", 6),
+("Cơ sở dữ liệu", 4)

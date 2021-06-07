@@ -21,10 +21,10 @@ public class AccountSettingAlt extends JDialog {
     private JButton saveusernameButton;
     private JTextField editfullnameTF;
     private JButton savefullnameButton;
+    private JButton resetpasswordButton;
     private JLabel usernameLabel;
     private JLabel fullnameLabel;
     private JLabel passwordLabel;
-    private JButton resetpasswordButton;
 
     public AccountSettingAlt(Object user) {
         this.setTitle("Account Setting");
@@ -70,7 +70,7 @@ public class AccountSettingAlt extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 String changedUsername = editusernameTF.getText();
                 if (changedUsername.length() == 0) {
-                    JOptionPane.showMessageDialog(getDialog(), "Username is empty!");
+                    JOptionPane.showMessageDialog(getDialog(), "Username trống!");
                     return;
                 }
                 Account_Info accountInfo = new Account_Info();
@@ -101,7 +101,7 @@ public class AccountSettingAlt extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 String changedFullname = editfullnameTF.getText();
                 if (changedFullname.length() == 0) {
-                    JOptionPane.showMessageDialog(getDialog(), "Fullname is empty!");
+                    JOptionPane.showMessageDialog(getDialog(), "Họ tên trống!");
                     return;
                 }
                 Account_Info accountInfo = new Account_Info();

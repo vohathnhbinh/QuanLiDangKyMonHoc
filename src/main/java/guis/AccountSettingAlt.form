@@ -25,7 +25,7 @@
         <properties>
           <font size="24"/>
           <labelFor value="83121"/>
-          <text value="Fullname"/>
+          <text value="Họ tên"/>
         </properties>
       </component>
       <component id="83121" class="javax.swing.JTextField" binding="fullnameTextField">
@@ -118,7 +118,7 @@
         </constraints>
         <properties>
           <font size="24"/>
-          <text value="Password"/>
+          <text value="Mật khẩu"/>
         </properties>
       </component>
       <component id="db023" class="javax.swing.JButton" binding="resetpasswordButton">

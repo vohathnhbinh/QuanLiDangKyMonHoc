@@ -20,6 +20,7 @@ public class CourseDao {
             trans = ss.beginTransaction();
             courses = ss.createQuery(hql).list();
             trans.commit();
+            ss.close();
         } catch (HibernateError err) {
             trans.rollback();
             System.err.println(err);
@@ -42,6 +43,7 @@ public class CourseDao {
                 query = ss.createQuery(hql).setParameter(field, cond);
             course = (Course) query.uniqueResult();
             trans.commit();
+            ss.close();
         } catch (HibernateError err) {
             trans.rollback();
             System.err.println(err);
@@ -56,6 +58,7 @@ public class CourseDao {
             trans = ss.beginTransaction();
             int id = (int) ss.save(course);
             trans.commit();
+            ss.close();
         } catch (HibernateError err) {
             trans.rollback();
             System.err.println(err);

@@ -17,7 +17,7 @@ public class Subject implements Serializable {
     private String subject_name;
     private int credit_amount;
 
-    @OneToMany(mappedBy = "subject")
+    @OneToMany(mappedBy = "subject", cascade=CascadeType.ALL, orphanRemoval = true)
     private Set<Course> courses = new HashSet<>();
 
     public Subject() {
