@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="3" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="589" height="624"/>
+      <xy x="20" y="20" width="597" height="656"/>
     </constraints>
     <properties/>
     <border type="bevel-raised"/>
@@ -229,11 +229,102 @@
                   </scrollpane>
                 </children>
               </grid>
+              <grid id="2ae82" binding="SEMESTERPanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <tabbedpane title="Học kì"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <grid id="7e54f" binding="funkyshitSemesterPanel" layout-manager="GridLayoutManager" row-count="2" column-count="6" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="0" right="0"/>
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <component id="4e6ae" class="javax.swing.JButton" binding="addSemesterButton">
+                        <constraints>
+                          <grid row="0" column="3" row-span="2" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <background color="-1192174"/>
+                          <font size="18"/>
+                          <foreground color="-1"/>
+                          <text value="ADD"/>
+                        </properties>
+                      </component>
+                      <component id="33160" class="javax.swing.JComboBox" binding="semesterCombobox">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <font size="12"/>
+                          <model>
+                            <item value="Học kì"/>
+                            <item value="HK1"/>
+                            <item value="HK2"/>
+                            <item value="HK3"/>
+                          </model>
+                        </properties>
+                      </component>
+                      <component id="c1bf4" class="javax.swing.JComboBox" binding="yearCombobox">
+                        <constraints>
+                          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <font size="12"/>
+                          <model/>
+                        </properties>
+                      </component>
+                      <component id="df7a" class="javax.swing.JFormattedTextField" binding="startDate" custom-create="true">
+                        <constraints>
+                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                            <preferred-size width="150" height="-1"/>
+                          </grid>
+                        </constraints>
+                        <properties>
+                          <text value="Ngày bắt đầu (dd-mm-yyyy)"/>
+                        </properties>
+                      </component>
+                      <component id="e0292" class="javax.swing.JFormattedTextField" binding="endDate" custom-create="true">
+                        <constraints>
+                          <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                            <preferred-size width="150" height="-1"/>
+                          </grid>
+                        </constraints>
+                        <properties>
+                          <text value="Ngày kết thúc (dd-mm-yyyy)"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
+                  <scrollpane id="9a80e" binding="semesterPane" custom-create="true">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                        <minimum-size width="-1" height="400"/>
+                        <preferred-size width="-1" height="400"/>
+                        <maximum-size width="-1" height="500"/>
+                      </grid>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <component id="967b1" class="javax.swing.JTable" binding="semesterTable" custom-create="true">
+                        <constraints/>
+                        <properties/>
+                      </component>
+                    </children>
+                  </scrollpane>
+                </children>
+              </grid>
             </children>
           </tabbedpane>
         </children>
       </grid>
-      <grid id="469dc" binding="toolbarPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="469dc" binding="toolbarPanel" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
@@ -279,6 +370,15 @@
             <properties>
               <font size="28"/>
               <text value="Chào mừng "/>
+            </properties>
+          </component>
+          <component id="64415" class="javax.swing.JLabel" binding="currentSemesterLabel">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <font size="20"/>
+              <text value="Học kì hiện tại"/>
             </properties>
           </component>
         </children>

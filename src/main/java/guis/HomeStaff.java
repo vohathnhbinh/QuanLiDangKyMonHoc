@@ -1,8 +1,10 @@
 package guis;
 
 import additionals.Role;
+import daos.SemesterDao;
 import daos.StaffDao;
 import daos.SubjectDao;
+import models.Semester;
 import models.Staff;
 import models.Subject;
 
@@ -10,6 +12,11 @@ import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class HomeStaff extends JFrame {
@@ -105,12 +112,52 @@ public class HomeStaff extends JFrame {
         }
     };
 
+    // SEMESTER
+    private JFormattedTextField startDate;
+    private JFormattedTextField endDate;
+    private JButton addSemesterButton;
+    private JComboBox semesterCombobox;
+    private JComboBox yearCombobox;
+    private JPanel funkyshitSemesterPanel;
+    private JScrollPane semesterPane;
+    private JPanel SEMESTERPanel;
+    private JTable semesterTable;
+    private JLabel currentSemesterLabel;
+    private semesterTableModel semesterModel;
+    private Semester currentSemester = null;
+
+    Action deleteSemester = new AbstractAction() {
+        public void actionPerformed(ActionEvent e) {
+            int modelRow = Integer.valueOf(e.getActionCommand());
+            List<Semester> semesters = semesterModel.getSemesters();
+            Semester semester = semesters.get(modelRow);
+
+            int input = JOptionPane.showConfirmDialog(getFrame(), "Bạn có chắc chắn muốn xóa?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
+
+            if (input == 0) {
+                semesterModel.remove(semester);
+            }
+        }
+    };
+
+    Action chooseSemester = new AbstractAction() {
+        public void actionPerformed(ActionEvent e) {
+            int modelRow = Integer.valueOf(e.getActionCommand());
+            List<Semester> semesters = semesterModel.getSemesters();
+            Semester semester = semesters.get(modelRow);
+
+            currentSemester = semester;
+            currentSemesterLabel.setText(semester.getName() + " * " + semester.getSchool_year());
+        }
+    };
 
     public HomeStaff(final Staff user) {
         this.setContentPane(mainPanel);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("Manage Courses");
         this.setSize(1024, 768);
+        if (currentSemester != null)
+            currentSemesterLabel.setText(currentSemester.getName() + " * " + currentSemester.getSchool_year());
 
         dialog = new AccountSetting(user);
 
@@ -348,6 +395,104 @@ public class HomeStaff extends JFrame {
                 }
             }
         });
+
+        // SEMESTER
+        SEMESTERPanel.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                super.componentShown(e);
+                if (semesterModel == null) {
+                    semesterModel = new semesterTableModel();
+                    semesterTable.setModel(semesterModel);
+                    ButtonColumn buttonColumn5 = new ButtonColumn(semesterTable, chooseSemester, 4);
+                    ButtonColumn buttonColumn6 = new ButtonColumn(semesterTable, deleteSemester, 5);
+
+                    int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+                    String item1 = Integer.toString(currentYear - 1) + '-' + Integer.toString(currentYear);
+                    String item2 = Integer.toString(currentYear) + '-' + Integer.toString(currentYear + 1);
+                    String item3 = Integer.toString(currentYear + 1) + '-' + Integer.toString(currentYear + 2);
+                    yearCombobox.addItem("Năm học");
+                    yearCombobox.addItem(item1);
+                    yearCombobox.addItem(item2);
+                    yearCombobox.addItem(item3);
+                }
+            }
+        });
+        startDate.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                super.focusLost(e);
+                if (startDate.getText().isEmpty()) {
+                    startDate.setText("Ngày bắt đầu (dd-mm-yyyy)");
+                }
+            }
+        });
+        startDate.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                super.focusGained(e);
+                if (startDate.getText().equals("Ngày bắt đầu (dd-mm-yyyy)")) {
+                    startDate.setText("");
+                }
+            }
+        });
+        endDate.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                super.focusLost(e);
+                if (startDate.getText().isEmpty()) {
+                    startDate.setText("Ngày kết thúc (dd-mm-yyyy)");
+                }
+            }
+        });
+        endDate.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                super.focusGained(e);
+                if (startDate.getText().equals("Ngày kết thúc (dd-mm-yyyy)")) {
+                    startDate.setText("");
+                }
+            }
+        });
+        addSemesterButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SimpleDateFormat oldFormat = new SimpleDateFormat("dd-MM-yyyy");
+                SimpleDateFormat newFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String oldStartDate = (String) startDate.getText();
+                Date newStartDate = null;
+                String oldEndDate = (String) endDate.getText();
+                Date newEndDate = null;
+                try {
+                    Date startD = oldFormat.parse(oldStartDate);
+                    System.out.println(oldStartDate);
+                    System.out.println(startD);
+                    Date endD = oldFormat.parse(oldEndDate);
+                    newStartDate = newFormat.parse(newFormat.format(startD));
+                    newEndDate = newFormat.parse(newFormat.format(endD));
+                } catch (ParseException parseException) {
+                    parseException.printStackTrace();
+                }
+
+                String semester_name = (String) semesterCombobox.getSelectedItem();
+                String school_year = (String) yearCombobox.getSelectedItem();
+                if (semester_name.equals("Học kì")) {
+                    JOptionPane.showMessageDialog(getFrame(), "Hãy chọn học kì!");
+                    return;
+                }
+                if (school_year.equals("Năm học")) {
+                    JOptionPane.showMessageDialog(getFrame(), "Hãy chọn năm học!");
+                    return;
+                }
+                Semester semester = new Semester();
+                semester.setName(semester_name);
+                semester.setSchool_year(school_year);
+                semester.setStart_date(newStartDate);
+                semester.setEnd_date(newEndDate);
+                semesterModel.add(semester);
+                semesterModel.changeData();
+            }
+        });
     }
     public JFrame getFrame() {
         return this;
@@ -562,6 +707,97 @@ public class HomeStaff extends JFrame {
         }
     }
 
+    class semesterTableModel extends AbstractTableModel {
+        private List<Semester> semesters;
+
+        public semesterTableModel() {
+            semesters = SemesterDao.getAll();
+        }
+
+        public semesterTableModel(List<Semester> semesters) {
+            this.semesters = semesters;
+        }
+
+        public void setSemesters(List<Semester> semester) {
+            this.semesters = semesters;
+        }
+
+        public List<Semester> getSemesters() {
+            return semesters;
+        }
+
+        @Override
+        public int getRowCount() {
+            return semesters.size();
+        }
+
+        @Override
+        public int getColumnCount() {
+            return 6;
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            switch (column) {
+                case 0: return "Học kì";
+                case 1: return "Năm học";
+                case 2: return "Ngày bắt đầu";
+                case 3: return "Ngày kết thúc";
+                case 4:
+                case 5: return "";
+            }
+            return null;
+        }
+
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            final Semester semester = semesters.get(rowIndex);
+            switch (columnIndex) {
+                case 0: return semester.getName();
+                case 1: return semester.getSchool_year();
+                case 2: return semester.getStart_date();
+                case 3: return semester.getEnd_date();
+                case 4: return "CHOOSE";
+                case 5: return "DELETE";
+            }
+            return null;
+        }
+
+        @Override
+        public boolean isCellEditable(int row, int col) {
+            switch (col) {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                    return false;
+                case 4:
+                case 5:
+                    return true;
+            }
+            return false;
+        }
+
+        public void changeData() {
+            fireTableDataChanged();
+        }
+
+        public void add(Semester semester) {
+            int row = semesters.indexOf(semester);
+            SemesterDao.add(semester);
+            semesters.add(semester);
+        }
+
+        public void remove(Semester semester) {
+            if (semesters.contains(semester)) {
+                int row = semesters.indexOf(semester);
+                semesters.remove(row);
+                fireTableRowsDeleted(row, row);
+                SemesterDao.remove(semester);
+            }
+        }
+    }
+
 
 
     public void createUIComponents() {
@@ -580,5 +816,16 @@ public class HomeStaff extends JFrame {
         subjectTable.setFont(new Font(Font.SERIF, Font.PLAIN, 18));
         subjectTable.getTableHeader().setFont(new Font(Font.SERIF, Font.BOLD, 20));
         subjectTable.setFillsViewportHeight(true);
+
+        semesterTable = new JTable();
+        semesterPane = new JScrollPane(subjectTable);
+        semesterPane.setPreferredSize(new Dimension(1024, 600));
+        semesterTable.setFont(new Font(Font.SERIF, Font.PLAIN, 18));
+        semesterTable.getTableHeader().setFont(new Font(Font.SERIF, Font.BOLD, 20));
+        semesterTable.setFillsViewportHeight(true);
+
+        DateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+        startDate = new JFormattedTextField(format);
+        endDate = new JFormattedTextField(format);
     }
 }
