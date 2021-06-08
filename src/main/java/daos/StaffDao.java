@@ -104,8 +104,8 @@ public class StaffDao {
             if (account.old_password != null) {
                 if (!staff.getPassword().equals(account.old_password))
                     return "Sai mật khẩu!";
-                if (account.new_password.length() < 6)
-                    return "Mật khẩu phải có trên 6 kí tự!";
+                if (account.new_password.length() < 5)
+                    return "Mật khẩu phải có trên 5 kí tự!";
                 if (!account.new_password.equals(account.retype_password))
                     return "Mật khẩu không trùng khớp nhau!";
                 staff.setPassword(account.new_password);

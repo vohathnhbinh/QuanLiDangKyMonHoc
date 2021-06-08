@@ -15,4 +15,16 @@ public enum Shift {
     public String getShift_time() {
         return this.shift_time;
     }
+
+    @Override
+    public String toString() {
+        return shift_time;
+    }
+
+    public static Shift getEnumByValue(String value){
+        for(Shift e : Shift.values()){
+            if(e.shift_time.equals(value)) return e;
+        }
+        return null;
+    }
 }

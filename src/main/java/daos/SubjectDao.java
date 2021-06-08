@@ -142,5 +142,4 @@ public class SubjectDao {
         }
         return subjects;
     }
-
 }

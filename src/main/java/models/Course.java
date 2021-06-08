@@ -57,6 +57,16 @@ public class Course implements Serializable {
         this.students = students;
     }
 
+    public Course(Semester semester, Subject subject, Teacher teacher, String classroom, Date_of_week date_of_week, Shift shift, int max_slot) {
+        this.semester = semester;
+        this.subject = subject;
+        this.teacher = teacher;
+        this.classroom = classroom;
+        this.date_of_week = date_of_week;
+        this.shift = shift;
+        this.max_slot = max_slot;
+    }
+
     public int getCourse_id() {
         return course_id;
     }

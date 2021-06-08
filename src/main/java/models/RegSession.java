@@ -3,9 +3,10 @@ package models;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
-@Table(name = "class")
+@Table(name = "session")
 
 public class RegSession implements Serializable {
     @Id
@@ -25,6 +26,11 @@ public class RegSession implements Serializable {
 
     public RegSession(int session_id, Semester semester, Date begin_date, Date expired_date) {
         this.session_id = session_id;
+        this.semester = semester;
+        this.begin_date = begin_date;
+        this.expired_date = expired_date;
+    }
+    public RegSession(Semester semester, Date begin_date, Date expired_date) {
         this.semester = semester;
         this.begin_date = begin_date;
         this.expired_date = expired_date;
@@ -60,5 +66,18 @@ public class RegSession implements Serializable {
 
     public void setExpired_date(Date expired_date) {
         this.expired_date = expired_date;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RegSession that = (RegSession) o;
+        return session_id == that.session_id && Objects.equals(begin_date, that.begin_date) && Objects.equals(expired_date, that.expired_date);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(session_id, begin_date, expired_date);
     }
 }

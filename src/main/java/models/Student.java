@@ -21,7 +21,7 @@ public class Student extends User{
     @JoinColumn(name="class_id")
     private Class myClass;
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<Student_Course> courses = new HashSet<>();
 
     public Student() {}

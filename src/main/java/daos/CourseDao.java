@@ -1,8 +1,7 @@
 package daos;
 
 import models.Course;
-import models.Staff;
-import models.Student;
+
 import org.hibernate.HibernateError;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -63,5 +62,39 @@ public class CourseDao {
             trans.rollback();
             System.err.println(err);
         }
+    }
+
+    public static void remove(Course course) {
+        Transaction trans = null;
+        try {
+            Session ss = (Session) HibernateUtil.getSessionFactory().openSession();
+            trans = ss.beginTransaction();
+            ss.delete(course);
+            trans.commit();
+            ss.close();
+        } catch (HibernateError err) {
+            trans.rollback();
+            System.err.println(err);
+        }
+    }
+
+    public static List<Course> searchCourse(String info) {
+        Transaction trans = null;
+        try {
+            Session ss = (Session) HibernateUtil.getSessionFactory().openSession();
+            trans = ss.beginTransaction();
+            String hql = "FROM Course " +
+                    "WHERE (LOWER(classroom) LIKE :classroom) OR (date_of_week LIKE :date_of_week)";
+            Query query = ss.createQuery(hql);
+            query.setParameter("classroom", '%' + info.toLowerCase() + '%');
+            query.setParameter("date_of_week", '%' + info + '%');
+            courses = query.list();
+            trans.commit();
+            ss.close();
+        } catch (HibernateError err) {
+            trans.rollback();
+            System.err.println(err);
+        }
+        return courses;
     }
 }

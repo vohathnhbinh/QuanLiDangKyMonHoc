@@ -1,7 +1,9 @@
 package guis;
 
+import additionals.Date_of_week;
 import additionals.Gender;
 import additionals.Role;
+import additionals.Shift;
 import daos.*;
 import models.*;
 import models.Class;
@@ -202,6 +204,49 @@ public class HomeStaff extends JFrame {
             studentModel.update(student);
         }
     };
+
+    // REGISTER
+    private JPanel REGPanel;
+    private JPanel funkyshitRegPanel;
+    private JFormattedTextField startRegDate;
+    private JFormattedTextField endRegDate;
+    private JButton addRegButton;
+    private JScrollPane regPane;
+    private JTable regTable;
+    private regTableModel regModel;
+
+    // COURSE
+    private JButton searchCourseButton;
+    private JButton resetCourseButton;
+    private JButton addCourseButton;
+    private JPanel funkyshitCoursePanel;
+    private JScrollPane coursePane;
+    private JTable courseTable;
+    private JComboBox teacherCombobox;
+    private JComboBox dateofweekCombobox;
+    private JComboBox shiftCombobox;
+    private JTextField classroomTextField;
+    private JTextField searchCourseTextField;
+    private JTextField maxSlot;
+    private JComboBox subjectCombobox;
+    private JTextField subjectChoose;
+    private JPanel COURSEPanel;
+    private courseTableModel courseModel;
+
+    Action deleteCourse = new AbstractAction() {
+        public void actionPerformed(ActionEvent e) {
+            int modelRow = Integer.valueOf(e.getActionCommand());
+            List<Course> courses = courseModel.getCourses();
+            Course course = courses.get(modelRow);
+
+            int input = JOptionPane.showConfirmDialog(getFrame(), "Bạn có chắc chắn muốn xóa?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
+
+            if (input == 0) {
+                courseModel.remove(course);
+            }
+        }
+    };
+
 
     public HomeStaff(final Staff user) {
         this.setContentPane(mainPanel);
@@ -492,8 +537,8 @@ public class HomeStaff extends JFrame {
             @Override
             public void focusLost(FocusEvent e) {
                 super.focusLost(e);
-                if (startDate.getText().isEmpty()) {
-                    startDate.setText("Ngày kết thúc (dd-mm-yyyy)");
+                if (endDate.getText().isEmpty()) {
+                    endDate.setText("Ngày kết thúc (dd-mm-yyyy)");
                 }
             }
         });
@@ -501,8 +546,8 @@ public class HomeStaff extends JFrame {
             @Override
             public void focusGained(FocusEvent e) {
                 super.focusGained(e);
-                if (startDate.getText().equals("Ngày kết thúc (dd-mm-yyyy)")) {
-                    startDate.setText("");
+                if (endDate.getText().equals("Ngày kết thúc (dd-mm-yyyy)")) {
+                    endDate.setText("");
                 }
             }
         });
@@ -517,8 +562,6 @@ public class HomeStaff extends JFrame {
                 Date newEndDate = null;
                 try {
                     Date startD = oldFormat.parse(oldStartDate);
-                    System.out.println(oldStartDate);
-                    System.out.println(startD);
                     Date endD = oldFormat.parse(oldEndDate);
                     newStartDate = newFormat.parse(newFormat.format(startD));
                     newEndDate = newFormat.parse(newFormat.format(endD));
@@ -688,6 +731,236 @@ public class HomeStaff extends JFrame {
                 studentModel.changeData();
                 classModel.setClasses(ClassDao.getAll());
                 classModel.changeData();
+            }
+        });
+
+        // REGISTER
+        REGPanel.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                super.componentShown(e);
+                if (regModel == null) {
+                    regModel = new regTableModel();
+                    regTable.setModel(regModel);
+                }
+            }
+        });
+        startRegDate.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                super.focusLost(e);
+                if (startRegDate.getText().isEmpty()) {
+                    startRegDate.setText("Ngày bắt đầu (dd-mm-yyyy)");
+                }
+            }
+        });
+        startRegDate.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                super.focusGained(e);
+                if (startRegDate.getText().equals("Ngày bắt đầu (dd-mm-yyyy)")) {
+                    startRegDate.setText("");
+                }
+            }
+        });
+        endRegDate.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                super.focusLost(e);
+                if (endRegDate.getText().isEmpty()) {
+                    endRegDate.setText("Ngày kết thúc (dd-mm-yyyy)");
+                }
+            }
+        });
+        endRegDate.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                super.focusGained(e);
+                if (endRegDate.getText().equals("Ngày kết thúc (dd-mm-yyyy)")) {
+                    endRegDate.setText("");
+                }
+            }
+        });
+        addRegButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (currentSemester == null) {
+                    JOptionPane.showMessageDialog(getFrame(), "Hãy chọn học kì hiện tại!");
+                    return;
+                }
+                SimpleDateFormat oldFormat = new SimpleDateFormat("dd-MM-yyyy");
+                SimpleDateFormat newFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String oldStartDate = (String) startRegDate.getText();
+                Date newStartDate = null;
+                String oldEndDate = (String) endRegDate.getText();
+                Date newEndDate = null;
+                try {
+                    Date startD = oldFormat.parse(oldStartDate);
+                    Date endD = oldFormat.parse(oldEndDate);
+                    newStartDate = newFormat.parse(newFormat.format(startD));
+                    newEndDate = newFormat.parse(newFormat.format(endD));
+                } catch (ParseException parseException) {
+                    parseException.printStackTrace();
+                }
+                RegSession regSession = new RegSession(currentSemester, newStartDate, newEndDate);
+                regModel.add(regSession);
+                regModel.changeData();
+            }
+        });
+        COURSEPanel.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                super.componentShown(e);
+                if (courseModel == null) {
+                    courseModel = new courseTableModel();
+                    courseTable.setModel(courseModel);
+                    ButtonColumn buttonColumn9 = new ButtonColumn(courseTable, deleteCourse, 7);
+
+                    subjectCombobox.addItem("Mã môn");
+                    List<Subject> subjects = SubjectDao.getAll();
+                    for (Subject thisSubject : subjects) {
+                        subjectCombobox.addItem(thisSubject.getSubject_number());
+                    }
+                    teacherCombobox.addItem("Giáo viên");
+                    List<Teacher> teachers = TeacherDao.getAll();
+                    for (Teacher thisTeacher : teachers) {
+                        teacherCombobox.addItem(thisTeacher.getTeacher_name());
+                    }
+
+                    courseTable.getColumnModel().getColumn(1).setMinWidth(250);
+                    courseTable.getColumnModel().getColumn(3).setMinWidth(250);
+                    courseTable.getColumnModel().getColumn(5).setMinWidth(170);
+                }
+            }
+        });
+        searchCourseTextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                super.focusLost(e);
+                if (searchCourseTextField.getText().isEmpty()) {
+                    searchCourseTextField.setText("Tìm theo phòng học");
+                }
+            }
+        });
+        searchCourseTextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                super.focusGained(e);
+                if (searchCourseTextField.getText().equals("Tìm theo phòng học")) {
+                    searchCourseTextField.setText("");
+                }
+            }
+        });
+        classroomTextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                super.focusLost(e);
+                if (classroomTextField.getText().isEmpty()) {
+                    classroomTextField.setText("Phòng học");
+                }
+            }
+        });
+        classroomTextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                super.focusGained(e);
+                if (classroomTextField.getText().equals("Phòng học")) {
+                    classroomTextField.setText("");
+                }
+            }
+        });
+        maxSlot.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                super.focusLost(e);
+                if (maxSlot.getText().isEmpty()) {
+                    maxSlot.setText("Slot tối đa");
+                }
+            }
+        });
+        maxSlot.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                super.focusGained(e);
+                if (maxSlot.getText().equals("Slot tối đa")) {
+                    maxSlot.setText("");
+                }
+            }
+        });
+        subjectCombobox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                String subject_number = (String)subjectCombobox.getSelectedItem();
+                if (subject_number != null && subject_number != "Mã môn") {
+                    Subject subject = SubjectDao.findOne(subject_number, "subject_number");
+                    subjectChoose.setText(subject.getSubject_number() + " - " + subject.getSubject_name() + " - " + subject.getCredit_amount());
+                }
+            }
+        });
+        addCourseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (currentSemester == null) {
+                    JOptionPane.showMessageDialog(getFrame(), "Hãy chọn học kì hiện tại!");
+                    return;
+                }
+
+                String subject_number = (String)subjectCombobox.getSelectedItem();
+                if (subject_number.equals("Mã môn")) {
+                    JOptionPane.showMessageDialog(getFrame(), "Hãy chọn mã môn!");
+                    return;
+                }
+                Subject subject = SubjectDao.findOne(subject_number,"subject_number");
+                String classroom = classroomTextField.getText();
+                String teacher_name = (String)teacherCombobox.getSelectedItem();
+                if (teacher_name.equals("Giáo viên")) {
+                    JOptionPane.showMessageDialog(getFrame(), "Hãy chọn giáo viên!");
+                    return;
+                }
+                Teacher teacher = TeacherDao.findOne(teacher_name, "teacher_name");
+
+                String dateOfWeek = (String)dateofweekCombobox.getSelectedItem();
+                if (dateOfWeek.equals("Ngày học")) {
+                    JOptionPane.showMessageDialog(getFrame(), "Hãy chọn ngày học!");
+                    return;
+                }
+                String shift = (String)shiftCombobox.getSelectedItem();
+                if (shift.equals("Giờ học")) {
+                    JOptionPane.showMessageDialog(getFrame(), "Hãy chọn giờ học!");
+                    return;
+                }
+                String slot = maxSlot.getText();
+                if (slot.isEmpty()) {
+                    JOptionPane.showMessageDialog(getFrame(), "Slot tối đa trống!");
+                    return;
+                }
+                int max_slot = SubjectDao.myParseInt(slot);
+                if (max_slot < 20 || max_slot > 120) {
+                    JOptionPane.showMessageDialog(getFrame(), "Hãy nhập slot tối đa phù hợp (20 <= x <= 120)!");
+                    return;
+                }
+                Course course = new Course(currentSemester, subject, teacher, classroom, Date_of_week.getEnumByValue(dateOfWeek), Shift.getEnumByValue(shift), max_slot);
+                courseModel.add(course);
+                courseModel.changeData();
+            }
+        });
+        searchCourseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String searchInfo = searchCourseTextField.getText();
+                List<Course> courses = CourseDao.searchCourse(searchInfo);
+                if (courses.isEmpty())
+                    JOptionPane.showMessageDialog(getFrame(), "Không tìm thấy học phần!");
+                courseModel.setCourses(courses);
+                courseModel.changeData();
+            }
+        });
+        resetCourseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                List<Course> courses = CourseDao.getAll();
+                courseModel.setCourses(courses);
+                courseModel.changeData();
             }
         });
     }
@@ -1144,9 +1417,10 @@ public class HomeStaff extends JFrame {
             switch (col) {
                 case 0:
                 case 1:
-                    return false;
                 case 2:
                 case 3:
+                    return false;
+                case 4:
                     return true;
             }
             return false;
@@ -1174,6 +1448,179 @@ public class HomeStaff extends JFrame {
                     }
                 }
             });
+        }
+    }
+
+    class regTableModel extends AbstractTableModel {
+        private List<RegSession> regSessions;
+
+        public regTableModel() {
+            regSessions = RegSessionDao.getAll();
+        }
+
+        public regTableModel(List<RegSession> regSessions) {
+            this.regSessions = regSessions;
+        }
+
+        public void setRegSessions(List<RegSession> regSessions) {
+            this.regSessions = regSessions;
+        }
+
+        public List<RegSession> getRegSessions() {
+            return regSessions;
+        }
+
+        @Override
+        public int getRowCount() {
+            return regSessions.size();
+        }
+
+        @Override
+        public int getColumnCount() {
+            return 3;
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            switch (column) {
+                case 0: return "Học kì";
+                case 1: return "Ngày bắt đầu";
+                case 2: return "Ngày kết thúc";
+            }
+            return null;
+        }
+
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+            final RegSession regSession = regSessions.get(rowIndex);
+            Semester mySemester = regSession.getSemester();
+            switch (columnIndex) {
+                case 0: return mySemester.getName() + " * " + mySemester.getSchool_year();
+                case 1: return dateFormat.format(regSession.getBegin_date());
+                case 2: return dateFormat.format(regSession.getExpired_date());
+            }
+            return null;
+        }
+
+        @Override
+        public boolean isCellEditable(int row, int col) {
+            switch (col) {
+                case 0:
+                case 1:
+                case 2:
+                    return false;
+            }
+            return false;
+        }
+
+        public void changeData() {
+            fireTableDataChanged();
+        }
+
+        public void add(RegSession regSession) {
+            int row = regSessions.indexOf(regSession);
+            RegSessionDao.add(regSession);
+            regSessions.add(regSession);
+        }
+    }
+
+    class courseTableModel extends AbstractTableModel {
+        private List<Course> courses;
+
+        public courseTableModel() {
+            courses = CourseDao.getAll();
+        }
+
+        public courseTableModel(List<Course> courses) {
+            this.courses = courses;
+        }
+
+        public void setCourses(List<Course> courses) {
+            this.courses = courses;
+        }
+
+        public List<Course> getCourses() {
+            return courses;
+        }
+
+        @Override
+        public int getRowCount() {
+            return courses.size();
+        }
+
+        @Override
+        public int getColumnCount() {
+            return 8;
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            switch (column) {
+                case 0: return "Mã môn";
+                case 1: return "Tên môn";
+                case 2: return "Số tín chỉ";
+                case 3: return "Giáo viên";
+                case 4: return "Phòng học";
+                case 5: return "Thời gian";
+                case 6: return "Slot tối đa";
+                case 7: return "";
+            }
+            return null;
+        }
+
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            final Course course = courses.get(rowIndex);
+            Subject mySubject = course.getSubject();
+            switch (columnIndex) {
+                case 0: return mySubject.getSubject_number();
+                case 1: return mySubject.getSubject_name();
+                case 2: return mySubject.getCredit_amount();
+                case 3: return course.getTeacher().getTeacher_name();
+                case 4: return course.getClassroom();
+                case 5: return course.getDate_of_week().getDate() + " * " + course.getShift().getShift_time();
+                case 6: return course.getMax_slot();
+                case 7: return "DELETE";
+            }
+            return null;
+        }
+
+        @Override
+        public boolean isCellEditable(int row, int col) {
+            switch (col) {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                    return false;
+                case 7:
+                    return true;
+            }
+            return false;
+        }
+
+        public void changeData() {
+            fireTableDataChanged();
+        }
+
+        public void add(Course course) {
+            int row = courses.indexOf(course);
+            CourseDao.add(course);
+            courses.add(course);
+        }
+
+        public void remove(Course course) {
+            if (courses.contains(course)) {
+                int row = courses.indexOf(course);
+                courses.remove(row);
+                fireTableRowsDeleted(row, row);
+                CourseDao.remove(course);
+            }
         }
     }
 
@@ -1218,5 +1665,22 @@ public class HomeStaff extends JFrame {
         studentTable.setFont(new Font(Font.SERIF, Font.PLAIN, 18));
         studentTable.getTableHeader().setFont(new Font(Font.SERIF, Font.BOLD, 20));
         studentTable.setFillsViewportHeight(true);
+
+        regTable = new JTable();
+        regPane = new JScrollPane(regTable);
+        regPane.setPreferredSize(new Dimension(1024, 600));
+        regTable.setFont(new Font(Font.SERIF, Font.PLAIN, 18));
+        regTable.getTableHeader().setFont(new Font(Font.SERIF, Font.BOLD, 20));
+        regTable.setFillsViewportHeight(true);
+
+        startRegDate = new JFormattedTextField(format);
+        endRegDate = new JFormattedTextField(format);
+
+        courseTable = new JTable();
+        coursePane = new JScrollPane(courseTable);
+        coursePane.setPreferredSize(new Dimension(1024, 600));
+        courseTable.setFont(new Font(Font.SERIF, Font.PLAIN, 18));
+        courseTable.getTableHeader().setFont(new Font(Font.SERIF, Font.BOLD, 20));
+        courseTable.setFillsViewportHeight(true);
     }
 }
