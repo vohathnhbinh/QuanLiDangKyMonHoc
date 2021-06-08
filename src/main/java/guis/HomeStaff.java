@@ -1,12 +1,10 @@
 package guis;
 
+import additionals.Gender;
 import additionals.Role;
-import daos.SemesterDao;
-import daos.StaffDao;
-import daos.SubjectDao;
-import models.Semester;
-import models.Staff;
-import models.Subject;
+import daos.*;
+import models.*;
+import models.Class;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -136,6 +134,8 @@ public class HomeStaff extends JFrame {
 
             if (input == 0) {
                 semesterModel.remove(semester);
+                if (currentSemester.equals(semester))
+                    currentSemesterLabel.setText("Học kì hiện tại");
             }
         }
     };
@@ -148,6 +148,58 @@ public class HomeStaff extends JFrame {
 
             currentSemester = semester;
             currentSemesterLabel.setText(semester.getName() + " * " + semester.getSchool_year());
+        }
+    };
+
+    // CLASS
+    private JTextField classTextField;
+    private JButton addClassButton;
+    private JPanel funkyshitClassPanel;
+    private JPanel CLASSPanel;
+    private JScrollPane classPane;
+    private JTable classTable;
+    private classTableModel classModel;
+
+    Action deleteClass = new AbstractAction() {
+        public void actionPerformed(ActionEvent e) {
+            int modelRow = Integer.valueOf(e.getActionCommand());
+            List<Class> classes = classModel.getClasses();
+            Class myClass = classes.get(modelRow);
+
+            int input = JOptionPane.showConfirmDialog(getFrame(), "Bạn có chắc chắn muốn xóa?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
+
+            if (input == 0) {
+                classModel.remove(myClass);
+            }
+        }
+    };
+
+    // STUDENT
+    private JPanel STUDENTPanel;
+    private JTextField searchStudentTextField;
+    private JButton searchStudentButton;
+    private JButton resetStudentButton;
+    private JButton addStudentButton;
+    private JComboBox genderCombobox;
+    private JTextField studentNameTextField;
+    private JComboBox classCombobox;
+    private JScrollPane studentPane;
+    private JTable studentTable;
+    private JPanel funkyshitStudentPanel;
+    private JDialog dialogStudent;
+    private studentTableModel studentModel;
+
+    Action updateStudent = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int modelRow = Integer.valueOf(e.getActionCommand());
+            List<Student> students = studentModel.getStudents();
+            Student student = students.get(modelRow);
+
+            dialogStudent = new AccountSettingAlt(student);
+            dialogStudent.setModal(true);
+            dialogStudent.setVisible(true);
+            studentModel.update(student);
         }
     };
 
@@ -332,7 +384,7 @@ public class HomeStaff extends JFrame {
                 String searchInfo = searchSubjectField.getText();
                 List<Subject> subjects = SubjectDao.searchSubject(searchInfo, searchInfo, searchInfo);
                 if (subjects.isEmpty())
-                    JOptionPane.showMessageDialog(getFrame(), "Không tìm môn học!");
+                    JOptionPane.showMessageDialog(getFrame(), "Không tìm thấy môn học!");
                 subjectModel.setSubjects(subjects);
                 subjectModel.changeData();
             }
@@ -491,6 +543,151 @@ public class HomeStaff extends JFrame {
                 semester.setEnd_date(newEndDate);
                 semesterModel.add(semester);
                 semesterModel.changeData();
+            }
+        });
+
+        // CLASS
+        CLASSPanel.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                super.componentShown(e);
+                if (classModel == null) {
+                    classModel = new classTableModel();
+                    classTable.setModel(classModel);
+                    ButtonColumn buttonColumn7 = new ButtonColumn(classTable, deleteClass, 4);
+                }
+            }
+        });
+        addClassButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String class_name = classTextField.getText();
+                if (class_name.length() == 0) {
+                    JOptionPane.showMessageDialog(getFrame(), "Tên lớp học trống!");
+                    return;
+                }
+                Class myClass = new Class();
+                myClass.setClass_name(class_name);
+                classModel.add(myClass);
+                classModel.changeData();
+            }
+        });
+        classTextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                super.focusLost(e);
+                if (classTextField.getText().isEmpty()) {
+                    classTextField.setText("Tên lớp học");
+                }
+            }
+        });
+        classTextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                super.focusGained(e);
+                if (classTextField.getText().equals("Tên lớp học")) {
+                    classTextField.setText("");
+                }
+            }
+        });
+
+        // STUDENT
+        STUDENTPanel.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                super.componentShown(e);
+                if (studentModel == null) {
+                    studentModel = new studentTableModel();
+                    studentTable.setModel(studentModel);
+                    ButtonColumn buttonColumn8 = new ButtonColumn(studentTable, updateStudent, 4);
+
+                    classCombobox.addItem("Lớp học");
+                    List<Class> classes = ClassDao.getAll();
+                    for (Class thisClass : classes) {
+                        classCombobox.addItem(thisClass.getClass_name());
+                    }
+                }
+            }
+        });
+        searchStudentTextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                super.focusLost(e);
+                if (searchStudentTextField.getText().isEmpty()) {
+                    searchStudentTextField.setText("Tìm theo mã số hoặc họ tên sinh viên");
+                }
+            }
+        });
+        searchStudentTextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                super.focusGained(e);
+                if (searchStudentTextField.getText().equals("Tìm theo mã số hoặc họ tên sinh viên")) {
+                    searchStudentTextField.setText("");
+                }
+            }
+        });
+        studentNameTextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                super.focusLost(e);
+                if (studentNameTextField.getText().isEmpty()) {
+                    studentNameTextField.setText("Họ tên");
+                }
+            }
+        });
+        studentNameTextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                super.focusGained(e);
+                if (studentNameTextField.getText().equals("Họ tên")) {
+                    studentNameTextField.setText("");
+                }
+            }
+        });
+        searchStudentButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String searchInfo = searchStudentTextField.getText();
+                List<Student> students = StudentDao.searchStudent(searchInfo, searchInfo);
+                if (students.isEmpty())
+                    JOptionPane.showMessageDialog(getFrame(), "Không tìm thấy sinh viên!");
+                studentModel.setStudents(students);
+                studentModel.changeData();
+            }
+        });
+        resetStudentButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                List<Student> students = StudentDao.getAll();
+                studentModel.setStudents(students);
+                studentModel.changeData();
+            }
+        });
+        addStudentButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String fullname = studentNameTextField.getText();
+                String gender = (String)genderCombobox.getSelectedItem();
+                String class_name = (String)classCombobox.getSelectedItem();
+                Class myClass = ClassDao.findOne(class_name, "class_name");
+
+
+                if (gender.equals("Giới tính")) {
+                    JOptionPane.showMessageDialog(getFrame(), "Hãy chọn giới tính!");
+                    return;
+                }
+                if (class_name.equals("Lớp học")) {
+                    JOptionPane.showMessageDialog(getFrame(), "Hãy chọn lớp học!");
+                    return;
+                }
+                Gender realGender = gender.equals("NAM") ? Gender.MALE : Gender.FEMALE;
+                    Student student = new Student(fullname, myClass, realGender);
+
+                studentModel.add(student);
+                studentModel.changeData();
+                classModel.setClasses(ClassDao.getAll());
+                classModel.changeData();
             }
         });
     }
@@ -718,7 +915,7 @@ public class HomeStaff extends JFrame {
             this.semesters = semesters;
         }
 
-        public void setSemesters(List<Semester> semester) {
+        public void setSemesters(List<Semester> semesters) {
             this.semesters = semesters;
         }
 
@@ -751,12 +948,14 @@ public class HomeStaff extends JFrame {
 
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
             final Semester semester = semesters.get(rowIndex);
             switch (columnIndex) {
                 case 0: return semester.getName();
                 case 1: return semester.getSchool_year();
-                case 2: return semester.getStart_date();
-                case 3: return semester.getEnd_date();
+                case 2: return dateFormat.format(semester.getStart_date());
+                case 3: return dateFormat.format(semester.getEnd_date());
                 case 4: return "CHOOSE";
                 case 5: return "DELETE";
             }
@@ -798,7 +997,185 @@ public class HomeStaff extends JFrame {
         }
     }
 
+    class classTableModel extends AbstractTableModel {
+        private List<Class> classes;
 
+        public classTableModel() {
+            classes = ClassDao.getAll();
+        }
+
+        public classTableModel(List<Class> classes) {
+            this.classes = classes;
+        }
+
+        public void setClasses(List<Class> classes) {
+            this.classes = classes;
+        }
+
+        public List<Class> getClasses() {
+            return classes;
+        }
+
+        @Override
+        public int getRowCount() {
+            return classes.size();
+        }
+
+        @Override
+        public int getColumnCount() {
+            return 5;
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            switch (column) {
+                case 0: return "Tên lớp";
+                case 1: return "Tổng số sinh viên";
+                case 2: return "Số sinh viên nam";
+                case 3: return "Số sinh viên nữ";
+                case 4: return "";
+            }
+            return null;
+        }
+
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            final Class myClass = classes.get(rowIndex);
+            switch (columnIndex) {
+                case 0: return myClass.getClass_name();
+                case 1: return myClass.getClass_size();
+                case 2: return myClass.getMale_size();
+                case 3: return myClass.getFemale_size();
+                case 4: return "DELETE";
+            }
+            return null;
+        }
+
+        @Override
+        public boolean isCellEditable(int row, int col) {
+            switch (col) {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                    return false;
+                case 4:
+                    return true;
+            }
+            return false;
+        }
+
+        public void changeData() {
+            fireTableDataChanged();
+        }
+
+        public void add(Class myClass) {
+            int row = classes.indexOf(myClass);
+            ClassDao.add(myClass);
+            classes.add(myClass);
+        }
+
+        public void remove(Class myClass) {
+            if (classes.contains(myClass)) {
+                int row = classes.indexOf(myClass);
+                classes.remove(row);
+                fireTableRowsDeleted(row, row);
+                ClassDao.remove(myClass);
+            }
+        }
+    }
+
+    class studentTableModel extends AbstractTableModel {
+        private List<Student> students;
+
+        public studentTableModel() {
+            students = StudentDao.getAll();
+        }
+
+        public studentTableModel(List<Student> students) {
+            this.students = students;
+        }
+
+        public void setStudents(List<Student> students) {
+            this.students = students;
+        }
+
+        public List<Student> getStudents() {
+            return students;
+        }
+
+        @Override
+        public int getRowCount() {
+            return students.size();
+        }
+
+        @Override
+        public int getColumnCount() {
+            return 5;
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            switch (column) {
+                case 0: return "Mã số sinh viên";
+                case 1: return "Họ tên";
+                case 2: return "Giới tính";
+                case 3: return "Lớp";
+                case 4: return "";
+            }
+            return null;
+        }
+
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            final Student student = students.get(rowIndex);
+            switch (columnIndex) {
+                case 0: return student.getStudent_number();
+                case 1: return student.getFullname();
+                case 2: return student.getGender() == Gender.MALE ? "NAM" : "NỮ";
+                case 3: return student.getMyClass().getClass_name();
+                case 4: return "EDIT";
+            }
+            return null;
+        }
+
+        @Override
+        public boolean isCellEditable(int row, int col) {
+            switch (col) {
+                case 0:
+                case 1:
+                    return false;
+                case 2:
+                case 3:
+                    return true;
+            }
+            return false;
+        }
+
+        public void changeData() {
+            fireTableDataChanged();
+        }
+
+        public void add(Student student) {
+            students.add(student);
+            int row = students.indexOf(student);
+            StudentDao.add(student);
+        }
+
+        public void update(final Student student) {
+            dialogStudent.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    super.windowClosed(e);
+                    int row = students.indexOf(student);
+                    if (row >= 0) {
+                        students.set(row, student);
+                        fireTableRowsUpdated(row, row);
+                    }
+                }
+            });
+        }
+    }
 
     public void createUIComponents() {
         // TODO: place custom component creation code here
@@ -818,7 +1195,7 @@ public class HomeStaff extends JFrame {
         subjectTable.setFillsViewportHeight(true);
 
         semesterTable = new JTable();
-        semesterPane = new JScrollPane(subjectTable);
+        semesterPane = new JScrollPane(semesterTable);
         semesterPane.setPreferredSize(new Dimension(1024, 600));
         semesterTable.setFont(new Font(Font.SERIF, Font.PLAIN, 18));
         semesterTable.getTableHeader().setFont(new Font(Font.SERIF, Font.BOLD, 20));
@@ -827,5 +1204,19 @@ public class HomeStaff extends JFrame {
         DateFormat format = new SimpleDateFormat("dd-MM-yyyy");
         startDate = new JFormattedTextField(format);
         endDate = new JFormattedTextField(format);
+
+        classTable = new JTable();
+        classPane = new JScrollPane(classTable);
+        classPane.setPreferredSize(new Dimension(1024, 600));
+        classTable.setFont(new Font(Font.SERIF, Font.PLAIN, 18));
+        classTable.getTableHeader().setFont(new Font(Font.SERIF, Font.BOLD, 20));
+        classTable.setFillsViewportHeight(true);
+
+        studentTable = new JTable();
+        studentPane = new JScrollPane(studentTable);
+        studentPane.setPreferredSize(new Dimension(1024, 600));
+        studentTable.setFont(new Font(Font.SERIF, Font.PLAIN, 18));
+        studentTable.getTableHeader().setFont(new Font(Font.SERIF, Font.BOLD, 20));
+        studentTable.setFillsViewportHeight(true);
     }
 }

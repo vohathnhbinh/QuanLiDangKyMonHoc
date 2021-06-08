@@ -17,15 +17,15 @@ public class Course implements Serializable {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int course_id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name="semester_id", nullable=false)
     private Semester semester;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name="subject_id", nullable=false)
     private Subject subject;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name="teacher_id", nullable=false)
     private Teacher teacher;
 
@@ -39,7 +39,7 @@ public class Course implements Serializable {
 
     private int max_slot;
 
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<Student_Course> students = new HashSet<>();
 
     public Course() {

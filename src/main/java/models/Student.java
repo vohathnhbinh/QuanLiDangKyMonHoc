@@ -17,7 +17,7 @@ public class Student extends User{
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name="class_id")
     private Class myClass;
 

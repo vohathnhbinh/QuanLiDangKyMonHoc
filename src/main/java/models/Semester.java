@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -19,10 +20,10 @@ public class Semester implements Serializable {
     private Date start_date;
     private Date end_date;
 
-    @OneToMany(mappedBy = "semester")
+    @OneToMany(mappedBy = "semester", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Course> courses = new HashSet<>();
 
-    @OneToMany(mappedBy = "semester")
+    @OneToMany(mappedBy = "semester", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RegSession> regSessions = new HashSet<>();
 
     public Semester() {
@@ -92,5 +93,18 @@ public class Semester implements Serializable {
 
     public void setSessions(Set<RegSession> regSessions) {
         this.regSessions = regSessions;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Semester semester = (Semester) o;
+        return semester_id == semester.semester_id && Objects.equals(name, semester.name) && Objects.equals(school_year, semester.school_year) && Objects.equals(start_date, semester.start_date) && Objects.equals(end_date, semester.end_date);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(semester_id, name, school_year, start_date, end_date);
     }
 }

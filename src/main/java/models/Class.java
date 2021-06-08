@@ -20,7 +20,7 @@ public class Class implements Serializable {
     private int male_size = 0;
     private int female_size = 0;
 
-    @OneToMany(mappedBy = "myClass")
+    @OneToMany(mappedBy = "myClass", cascade = CascadeType.ALL)
     private Set<Student> students = new HashSet<>();
 
     public Class() {
@@ -64,6 +64,7 @@ public class Class implements Serializable {
     }
 
     public void setMale_size() {
+        this.male_size = 0;
         for (Student student : this.students) {
             if (student.getGender().equals(Gender.MALE))
                 ++this.male_size;
@@ -75,6 +76,7 @@ public class Class implements Serializable {
     }
 
     public void setFemale_size() {
+        this.female_size = 0;
         for (Student student : this.students) {
             if (student.getGender().equals(Gender.FEMALE))
                 ++this.female_size;
