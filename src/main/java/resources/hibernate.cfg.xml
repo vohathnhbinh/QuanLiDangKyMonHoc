@@ -12,6 +12,7 @@
         <property name="connection.password">carot</property>
         <property name="show_sql">true</property>
         <property name="hibernate.current_session_context_class">thread</property>
+        <property name="packagesToScan">models</property>
 
         <mapping class="models.User" />
         <mapping class="models.Student" />

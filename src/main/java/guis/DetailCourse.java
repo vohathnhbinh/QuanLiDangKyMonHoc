@@ -11,7 +11,9 @@ import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -40,10 +42,12 @@ public class DetailCourse extends JDialog {
         currentCourseTable.setModel(courseModel);
 
         Set<Student_Course> student_courses = course.getStudents();
+        List<Date> registerDates = new ArrayList<>();
         for (Student_Course thisStudentCourse : student_courses) {
             originalStudents.add(thisStudentCourse.getStudent());
+            registerDates.add(thisStudentCourse.getcreate_on());
         }
-        studentModel = new studentTableModel(originalStudents);
+        studentModel = new studentTableModel(originalStudents, registerDates);
         studentTable.setModel(studentModel);
 
         searchStudentTextField.addFocusListener(new FocusAdapter() {
@@ -154,13 +158,15 @@ public class DetailCourse extends JDialog {
 
     class studentTableModel extends AbstractTableModel {
         private java.util.List<Student> students;
+        private java.util.List<Date> registerDates;
 
         public studentTableModel() {
             students = StudentDao.getAll();
         }
 
-        public studentTableModel(java.util.List<Student> students) {
+        public studentTableModel(java.util.List<Student> students, java.util.List<Date> registerDates) {
             this.students = students;
+            this.registerDates = registerDates;
         }
 
         public void setStudents(java.util.List<Student> students) {
@@ -178,7 +184,7 @@ public class DetailCourse extends JDialog {
 
         @Override
         public int getColumnCount() {
-            return 4;
+            return 5;
         }
 
         @Override
@@ -188,18 +194,22 @@ public class DetailCourse extends JDialog {
                 case 1: return "Họ tên";
                 case 2: return "Giới tính";
                 case 3: return "Lớp";
+                case 4: return "Thòi gian đăng ký";
             }
             return null;
         }
 
         @Override
         public Object getValueAt(int row, int col) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
             final Student student = students.get(row);
+            final Date registerDate = registerDates.get(row);
             switch (col) {
                 case 0: return student.getStudent_number();
                 case 1: return student.getFullname();
                 case 2: return student.getGender() == Gender.MALE ? "NAM" : "NỮ";
                 case 3: return student.getMyClass().getClass_name();
+                case 4: return dateFormat.format(registerDate);
             }
             return null;
         }
