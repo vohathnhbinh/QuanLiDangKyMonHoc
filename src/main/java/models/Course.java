@@ -39,7 +39,7 @@ public class Course implements Serializable {
 
     private int max_slot;
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "course", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, orphanRemoval = true)
     Set<Student_Course> students = new HashSet<>();
 
     public Course() {
@@ -144,7 +144,7 @@ public class Course implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Course course = (Course) o;
-        return course_id == course.course_id && max_slot == course.max_slot && Objects.equals(semester, course.semester) && Objects.equals(subject, course.subject) && Objects.equals(teacher, course.teacher) && Objects.equals(classroom, course.classroom) && date_of_week == course.date_of_week && shift == course.shift && Objects.equals(students, course.students);
+        return course_id == course.course_id;
     }
 
     @Override

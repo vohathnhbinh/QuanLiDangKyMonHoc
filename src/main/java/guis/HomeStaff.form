@@ -592,20 +592,7 @@
                         <properties>
                           <font size="14"/>
                           <foreground color="-16777216"/>
-                          <text value="Tìm theo phòng học"/>
-                        </properties>
-                      </component>
-                      <component id="a68dd" class="javax.swing.JTextField" binding="classroomTextField">
-                        <constraints>
-                          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                            <preferred-size width="150" height="-1"/>
-                          </grid>
-                        </constraints>
-                        <properties>
-                          <background color="-1"/>
-                          <font size="14"/>
-                          <foreground color="-16777216"/>
-                          <text value="Phòng học"/>
+                          <text value="Tìm học phần"/>
                         </properties>
                       </component>
                       <component id="4ce82" class="javax.swing.JButton" binding="addCourseButton">
@@ -713,11 +700,53 @@
                           </grid>
                         </constraints>
                         <properties>
-                          <background color="-1"/>
+                          <background color="-14854188"/>
                           <editable value="false"/>
                           <font size="14"/>
-                          <foreground color="-16777216"/>
-                          <text value="Môn học"/>
+                          <foreground color="-1"/>
+                          <text value="Mã môn - Tên - Số tín chỉ"/>
+                        </properties>
+                      </component>
+                      <component id="58751" class="javax.swing.JComboBox" binding="classroomCombobox">
+                        <constraints>
+                          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <model>
+                            <item value="Phòng học"/>
+                            <item value="A101"/>
+                            <item value="A102"/>
+                            <item value="A103"/>
+                            <item value="A104"/>
+                            <item value="A105"/>
+                            <item value="A106"/>
+                            <item value="A201"/>
+                            <item value="A202"/>
+                            <item value="A203"/>
+                            <item value="A204"/>
+                            <item value="A205"/>
+                            <item value="A206"/>
+                            <item value="A301"/>
+                            <item value="A302"/>
+                            <item value="B101"/>
+                            <item value="B102"/>
+                            <item value="B103"/>
+                            <item value="B104"/>
+                            <item value="B105"/>
+                            <item value="B106"/>
+                            <item value="B201"/>
+                            <item value="B202"/>
+                            <item value="B203"/>
+                            <item value="B204"/>
+                            <item value="B205"/>
+                            <item value="B206"/>
+                            <item value="B301"/>
+                            <item value="B302"/>
+                            <item value="B303"/>
+                            <item value="B304"/>
+                            <item value="B305"/>
+                            <item value="B306"/>
+                          </model>
                         </properties>
                       </component>
                     </children>

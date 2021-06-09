@@ -21,7 +21,7 @@ public class Student extends User{
     @JoinColumn(name="class_id")
     private Class myClass;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "student", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, orphanRemoval = true)
     Set<Student_Course> courses = new HashSet<>();
 
     public Student() {}
@@ -91,17 +91,17 @@ public class Student extends User{
         course.getStudents().add(studentCourse);
     }
 
-    public void removeCourse(Course course) {
+    public Student_Course removeCourse(Course course) {
         for (Iterator<Student_Course> iterator = courses.iterator();
              iterator.hasNext(); ) {
             Student_Course studentCourse = iterator.next();
             if (studentCourse.getStudent().equals(this) &&
                     studentCourse.getCourse().getCourse_id() == course.getCourse_id()) {
                 iterator.remove();
-                studentCourse.getCourse().getStudents().remove(studentCourse);
-                studentCourse.setStudent(null);
-                studentCourse.setCourse(null);
+                course.getStudents().remove(studentCourse);
+                return studentCourse;
             }
         }
+        return null;
     }
 }

@@ -128,12 +128,15 @@ public class StudentDao {
         }
 
         try {
+            Student_Course studentCourse = null;
             Session ss = (Session) HibernateUtil.getSessionFactory().openSession();
             trans = ss.beginTransaction();
             if (isJoin)
                 student.addCourse(course);
-            else
-                student.removeCourse(course);
+            else {
+                studentCourse = student.removeCourse(course);
+                ss.delete(studentCourse);
+            }
             ss.merge(student);
             trans.commit();
             ss.close();
@@ -152,11 +155,11 @@ public class StudentDao {
             Session ss = (Session) HibernateUtil.getSessionFactory().openSession();
             trans = ss.beginTransaction();
             String hql = "FROM Student " +
-                    "WHERE (student_number = :student_number) OR" +
-                    "(LOWER(fullname) LIKE :exfullname)";
+                    "WHERE (LOWER(student_number) LIKE :student_number) OR" +
+                    "(LOWER(fullname) LIKE :fullname)";
             Query query = ss.createQuery(hql);
-            query.setParameter("student_number", student_number);
-            query.setParameter("exfullname", '%' + fullname.toLowerCase() + '%');
+            query.setParameter("student_number", '%' + student_number.toLowerCase() + '%');
+            query.setParameter("fullname", '%' + fullname.toLowerCase() + '%');
             students = query.list();
             trans.commit();
             ss.close();

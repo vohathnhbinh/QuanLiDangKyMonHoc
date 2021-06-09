@@ -2,6 +2,7 @@ package guis;
 
 import daos.CourseDao;
 import daos.RegSessionDao;
+import daos.StudentDao;
 import models.*;
 
 import javax.swing.*;
@@ -42,6 +43,53 @@ public class HomeStudent extends JFrame{
 
         final JDialog dialog = new AccountSetting(user);
 
+        Action joinCourse = new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                Set<Student_Course> student_courses = user.getCourses();
+                if (student_courses.size() >= 8) {
+                    JOptionPane.showMessageDialog(getFrame(), "Không thể đăng ký quá 8 học phần!");
+                    return;
+                }
+                int modelRow = Integer.valueOf(e.getActionCommand());
+                List<Course> courses = coursesModel.getCourses();
+                Course course = courses.get(modelRow);
+                for (Student_Course myStudentCourse : student_courses) {
+                    if (myStudentCourse.getCourse().getDate_of_week() == course.getDate_of_week()) {
+                        if (myStudentCourse.getCourse().getShift() == course.getShift()) {
+                            JOptionPane.showMessageDialog(getFrame(), "Không thể đăng ký trùng giờ học!");
+                            return;
+                        }
+                    }
+                }
+
+                int input = JOptionPane.showConfirmDialog(getFrame(), "Bạn có chắc chắn muốn tham gia?", "Xác nhận đăng ký", JOptionPane.YES_NO_OPTION);
+
+                if (input == 0) {
+                    JOptionPane.showMessageDialog(getFrame(), StudentDao.interactCourse(user, course, true));
+                    myCoursesModel.add(course);
+                    myCoursesModel.changeData();
+                    coursesModel.remove(course);
+                }
+            }
+        };
+
+        Action quitCourse = new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                int modelRow = Integer.valueOf(e.getActionCommand());
+                List<Course> courses = myCoursesModel.getCourses();
+                Course course = courses.get(modelRow);
+
+                int input = JOptionPane.showConfirmDialog(getFrame(), "Bạn có chắc chắn muốn thoát học phần?", "Xác nhận hủy đăng ký", JOptionPane.YES_NO_OPTION);
+
+                if (input == 0) {
+                    JOptionPane.showMessageDialog(getFrame(), StudentDao.interactCourse(user, course, false));
+                    myCoursesModel.remove(course);
+                    coursesModel.add(course);
+                    coursesModel.changeData();
+                }
+            }
+        };
+
         myCoursesPane.setVisible(false);
         coursesPane.setVisible(false);
         
@@ -57,16 +105,6 @@ public class HomeStudent extends JFrame{
             }
         }
         if (currentSession != null) {
-            List<Course> theseCourses = CourseDao.getAll();
-            List<Course> courses = new ArrayList<>();
-            for (Course thisCourse: theseCourses) {
-                if (currentSession.getSemester().equals(thisCourse.getSemester()))
-                    courses.add(thisCourse);
-            }
-            coursesModel = new courseTableModel(courses);
-            coursesModel.setMine(false);
-            coursesTable.setModel(coursesModel);
-
             Set<Student_Course> theirCourses = user.getCourses();
             List<Course> studentCourses = new ArrayList<>();
             for (Student_Course studentCourse : theirCourses) {
@@ -75,6 +113,19 @@ public class HomeStudent extends JFrame{
             myCoursesModel = new courseTableModel(studentCourses);
             myCoursesModel.setMine(true);
             myCoursesTable.setModel(myCoursesModel);
+            ButtonColumn buttonColumn1 = new ButtonColumn(myCoursesTable, quitCourse, 7);
+
+            List<Course> theseCourses = CourseDao.getAll();
+            List<Course> courses = new ArrayList<>();
+            for (Course thisCourse: theseCourses) {
+                if (currentSession.getSemester().equals(thisCourse.getSemester()))
+                    courses.add(thisCourse);
+            }
+            courses.removeAll(studentCourses);
+            coursesModel = new courseTableModel(courses);
+            coursesModel.setMine(false);
+            coursesTable.setModel(coursesModel);
+            ButtonColumn buttonColumn2 = new ButtonColumn(coursesTable, joinCourse, 7);
         }
 
         welcome.setText(welcome.getText() + user.getFullname());
@@ -143,32 +194,32 @@ public class HomeStudent extends JFrame{
         }
 
         @Override
-        public String getColumnName(int column) {
-            switch (column) {
+        public String getColumnName(int col) {
+            switch (col) {
                 case 0: return "Mã môn";
                 case 1: return "Tên môn";
                 case 2: return "Số tín chỉ";
                 case 3: return "Giáo viên";
                 case 4: return "Phòng học";
                 case 5: return "Thời gian";
-                case 6: return "Slot tối đa";
+                case 6: return "Slot hiện tại";
                 case 7: return "";
             }
             return null;
         }
 
         @Override
-        public Object getValueAt(int rowIndex, int columnIndex) {
-            final Course course = courses.get(rowIndex);
+        public Object getValueAt(int row, int col) {
+            final Course course = courses.get(row);
             Subject mySubject = course.getSubject();
-            switch (columnIndex) {
+            switch (col) {
                 case 0: return mySubject.getSubject_number();
                 case 1: return mySubject.getSubject_name();
                 case 2: return mySubject.getCredit_amount();
                 case 3: return course.getTeacher().getTeacher_name();
                 case 4: return course.getClassroom();
                 case 5: return course.getDate_of_week().getDate() + " * " + course.getShift().getShift_time();
-                case 6: return course.getMax_slot();
+                case 6: return course.getStudents().size() + "/" + course.getMax_slot();
                 case 7: return isMine ? "QUIT" : "JOIN";
             }
             return null;
@@ -176,6 +227,9 @@ public class HomeStudent extends JFrame{
 
         @Override
         public boolean isCellEditable(int row, int col) {
+            final Course course = courses.get(row);
+            int currentSize = course.getStudents().size();
+            int maxSize = course.getMax_slot();
             switch (col) {
                 case 0:
                 case 1:
@@ -186,7 +240,7 @@ public class HomeStudent extends JFrame{
                 case 6:
                     return false;
                 case 7:
-                    return true;
+                    return currentSize < maxSize;
             }
             return false;
         }
@@ -216,15 +270,15 @@ public class HomeStudent extends JFrame{
         myCoursesTable = new JTable();
         myCoursesPane = new JScrollPane(myCoursesTable);
         myCoursesPane.setPreferredSize(new Dimension(1024, 300));
-        myCoursesTable.setFont(new Font(Font.SERIF, Font.PLAIN, 18));
-        myCoursesTable.getTableHeader().setFont(new Font(Font.SERIF, Font.BOLD, 20));
+        myCoursesTable.setFont(new Font(Font.SERIF, Font.PLAIN, 14));
+        myCoursesTable.getTableHeader().setFont(new Font(Font.SERIF, Font.BOLD, 16));
         myCoursesTable.setFillsViewportHeight(true);
 
         coursesTable = new JTable();
         coursesPane = new JScrollPane(coursesTable);
         coursesPane.setPreferredSize(new Dimension(1024, 400));
-        coursesTable.setFont(new Font(Font.SERIF, Font.PLAIN, 18));
-        coursesTable.getTableHeader().setFont(new Font(Font.SERIF, Font.BOLD, 20));
+        coursesTable.setFont(new Font(Font.SERIF, Font.PLAIN, 14));
+        coursesTable.getTableHeader().setFont(new Font(Font.SERIF, Font.BOLD, 16));
         coursesTable.setFillsViewportHeight(true);
     }
 }

@@ -1,8 +1,10 @@
 package models;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
@@ -21,12 +23,15 @@ public class Student_Course implements Serializable {
     @JoinColumn(name = "course_id")
     Course course;
 
-    private Timestamp create_on;
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "create_on")
+    private Date create_on;
 
     public Student_Course() {
     }
 
-    public Student_Course(StudentCourseKey id, Student student, Course course, Timestamp create_on) {
+    public Student_Course(StudentCourseKey id, Student student, Course course, Date create_on) {
         this.id = id;
         this.student = student;
         this.course = course;
@@ -63,11 +68,11 @@ public class Student_Course implements Serializable {
         this.course = course;
     }
 
-    public Timestamp getcreate_on() {
+    public Date getcreate_on() {
         return create_on;
     }
 
-    public void setcreate_on(Timestamp create_on) {
+    public void setcreate_on(Date create_on) {
         this.create_on = create_on;
     }
 

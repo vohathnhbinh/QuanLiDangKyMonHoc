@@ -88,7 +88,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="dcc87" class="javax.swing.JTable" binding="myCoursesTable">
+              <component id="dcc87" class="javax.swing.JTable" binding="myCoursesTable" custom-create="true">
                 <constraints/>
                 <properties/>
               </component>
@@ -106,7 +106,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="aa7c7" class="javax.swing.JTable" binding="coursesTable">
+              <component id="aa7c7" class="javax.swing.JTable" binding="coursesTable" custom-create="true">
                 <constraints/>
                 <properties/>
               </component>

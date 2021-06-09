@@ -125,7 +125,7 @@ public class StaffDao {
             Session ss = (Session) HibernateUtil.getSessionFactory().openSession();
             trans = ss.beginTransaction();
             String hql = "FROM Staff " +
-                    "WHERE (staff_number LIKE :staff_number) OR" +
+                    "WHERE (LOWER(staff_number) LIKE :staff_number) OR" +
                     "(LOWER(fullname) LIKE :fullname)";
             Query query = ss.createQuery(hql);
             query.setParameter("staff_number", '%' + staff_number + '%');

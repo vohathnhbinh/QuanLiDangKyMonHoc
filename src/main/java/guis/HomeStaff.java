@@ -225,12 +225,12 @@ public class HomeStaff extends JFrame {
     private JComboBox teacherCombobox;
     private JComboBox dateofweekCombobox;
     private JComboBox shiftCombobox;
-    private JTextField classroomTextField;
     private JTextField searchCourseTextField;
     private JTextField maxSlot;
     private JComboBox subjectCombobox;
     private JTextField subjectChoose;
     private JPanel COURSEPanel;
+    private JComboBox classroomCombobox;
     private courseTableModel courseModel;
 
     Action deleteCourse = new AbstractAction() {
@@ -247,12 +247,23 @@ public class HomeStaff extends JFrame {
         }
     };
 
+    Action detailCourse = new AbstractAction() {
+        public void actionPerformed(ActionEvent e) {
+            int modelRow = Integer.valueOf(e.getActionCommand());
+            List<Course> courses = courseModel.getCourses();
+            Course course = courses.get(modelRow);
+
+            JDialog detailDialog = new DetailCourse(course);
+            detailDialog.setModal(true);
+            detailDialog.setVisible(true);
+        }
+    };
 
     public HomeStaff(final Staff user) {
         this.setContentPane(mainPanel);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("Manage Courses");
-        this.setSize(1024, 768);
+        this.setSize(1280, 720);
         if (currentSemester != null)
             currentSemesterLabel.setText(currentSemester.getName() + " * " + currentSemester.getSchool_year());
 
@@ -815,6 +826,7 @@ public class HomeStaff extends JFrame {
                     courseModel = new courseTableModel();
                     courseTable.setModel(courseModel);
                     ButtonColumn buttonColumn9 = new ButtonColumn(courseTable, deleteCourse, 7);
+                    ButtonColumn buttonColumn10 = new ButtonColumn(courseTable, detailCourse, 8);
 
                     subjectCombobox.addItem("Mã môn");
                     List<Subject> subjects = SubjectDao.getAll();
@@ -838,7 +850,7 @@ public class HomeStaff extends JFrame {
             public void focusLost(FocusEvent e) {
                 super.focusLost(e);
                 if (searchCourseTextField.getText().isEmpty()) {
-                    searchCourseTextField.setText("Tìm theo phòng học");
+                    searchCourseTextField.setText("Tìm học phần");
                 }
             }
         });
@@ -846,26 +858,8 @@ public class HomeStaff extends JFrame {
             @Override
             public void focusGained(FocusEvent e) {
                 super.focusGained(e);
-                if (searchCourseTextField.getText().equals("Tìm theo phòng học")) {
+                if (searchCourseTextField.getText().equals("Tìm học phần")) {
                     searchCourseTextField.setText("");
-                }
-            }
-        });
-        classroomTextField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusLost(FocusEvent e) {
-                super.focusLost(e);
-                if (classroomTextField.getText().isEmpty()) {
-                    classroomTextField.setText("Phòng học");
-                }
-            }
-        });
-        classroomTextField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                super.focusGained(e);
-                if (classroomTextField.getText().equals("Phòng học")) {
-                    classroomTextField.setText("");
                 }
             }
         });
@@ -911,7 +905,11 @@ public class HomeStaff extends JFrame {
                     return;
                 }
                 Subject subject = SubjectDao.findOne(subject_number,"subject_number");
-                String classroom = classroomTextField.getText();
+                String classroom = (String)classroomCombobox.getSelectedItem();
+                if (classroom == "Phòng học") {
+                    JOptionPane.showMessageDialog(getFrame(), "Hãy chọn phòng học!");
+                    return;
+                }
                 String teacher_name = (String)teacherCombobox.getSelectedItem();
                 if (teacher_name.equals("Giáo viên")) {
                     JOptionPane.showMessageDialog(getFrame(), "Hãy chọn giáo viên!");
@@ -1003,8 +1001,8 @@ public class HomeStaff extends JFrame {
         }
 
         @Override
-        public String getColumnName(int column) {
-            switch (column) {
+        public String getColumnName(int col) {
+            switch (col) {
                 case 0: return "Mã số giáo vụ";
                 case 1: return "Họ tên";
                 case 2:
@@ -1014,9 +1012,9 @@ public class HomeStaff extends JFrame {
         }
 
         @Override
-        public Object getValueAt(int rowIndex, int columnIndex) {
-            final Staff staff = staffs.get(rowIndex);
-            switch (columnIndex) {
+        public Object getValueAt(int row, int col) {
+            final Staff staff = staffs.get(row);
+            switch (col) {
                 case 0: return staff.getStaff_number();
                 case 1: return staff.getFullname();
                 case 2: return "EDIT";
@@ -1105,8 +1103,8 @@ public class HomeStaff extends JFrame {
         }
 
         @Override
-        public String getColumnName(int column) {
-            switch (column) {
+        public String getColumnName(int col) {
+            switch (col) {
                 case 0: return "Mã số môn học";
                 case 1: return "Tên";
                 case 2: return "Số tín chỉ";
@@ -1117,9 +1115,9 @@ public class HomeStaff extends JFrame {
         }
 
         @Override
-        public Object getValueAt(int rowIndex, int columnIndex) {
-            final Subject subject = subjects.get(rowIndex);
-            switch (columnIndex) {
+        public Object getValueAt(int row, int col) {
+            final Subject subject = subjects.get(row);
+            switch (col) {
                 case 0: return subject.getSubject_number();
                 case 1: return subject.getSubject_name();
                 case 2: return subject.getCredit_amount();
@@ -1207,8 +1205,8 @@ public class HomeStaff extends JFrame {
         }
 
         @Override
-        public String getColumnName(int column) {
-            switch (column) {
+        public String getColumnName(int col) {
+            switch (col) {
                 case 0: return "Học kì";
                 case 1: return "Năm học";
                 case 2: return "Ngày bắt đầu";
@@ -1220,11 +1218,11 @@ public class HomeStaff extends JFrame {
         }
 
         @Override
-        public Object getValueAt(int rowIndex, int columnIndex) {
+        public Object getValueAt(int row, int col) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
-            final Semester semester = semesters.get(rowIndex);
-            switch (columnIndex) {
+            final Semester semester = semesters.get(row);
+            switch (col) {
                 case 0: return semester.getName();
                 case 1: return semester.getSchool_year();
                 case 2: return dateFormat.format(semester.getStart_date());
@@ -1300,8 +1298,8 @@ public class HomeStaff extends JFrame {
         }
 
         @Override
-        public String getColumnName(int column) {
-            switch (column) {
+        public String getColumnName(int col) {
+            switch (col) {
                 case 0: return "Tên lớp";
                 case 1: return "Tổng số sinh viên";
                 case 2: return "Số sinh viên nam";
@@ -1312,9 +1310,9 @@ public class HomeStaff extends JFrame {
         }
 
         @Override
-        public Object getValueAt(int rowIndex, int columnIndex) {
-            final Class myClass = classes.get(rowIndex);
-            switch (columnIndex) {
+        public Object getValueAt(int row, int col) {
+            final Class myClass = classes.get(row);
+            switch (col) {
                 case 0: return myClass.getClass_name();
                 case 1: return myClass.getClass_size();
                 case 2: return myClass.getMale_size();
@@ -1388,8 +1386,8 @@ public class HomeStaff extends JFrame {
         }
 
         @Override
-        public String getColumnName(int column) {
-            switch (column) {
+        public String getColumnName(int col) {
+            switch (col) {
                 case 0: return "Mã số sinh viên";
                 case 1: return "Họ tên";
                 case 2: return "Giới tính";
@@ -1400,9 +1398,9 @@ public class HomeStaff extends JFrame {
         }
 
         @Override
-        public Object getValueAt(int rowIndex, int columnIndex) {
-            final Student student = students.get(rowIndex);
-            switch (columnIndex) {
+        public Object getValueAt(int row, int col) {
+            final Student student = students.get(row);
+            switch (col) {
                 case 0: return student.getStudent_number();
                 case 1: return student.getFullname();
                 case 2: return student.getGender() == Gender.MALE ? "NAM" : "NỮ";
@@ -1481,8 +1479,8 @@ public class HomeStaff extends JFrame {
         }
 
         @Override
-        public String getColumnName(int column) {
-            switch (column) {
+        public String getColumnName(int col) {
+            switch (col) {
                 case 0: return "Học kì";
                 case 1: return "Ngày bắt đầu";
                 case 2: return "Ngày kết thúc";
@@ -1491,12 +1489,12 @@ public class HomeStaff extends JFrame {
         }
 
         @Override
-        public Object getValueAt(int rowIndex, int columnIndex) {
+        public Object getValueAt(int row, int col) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
-            final RegSession regSession = regSessions.get(rowIndex);
+            final RegSession regSession = regSessions.get(row);
             Semester mySemester = regSession.getSemester();
-            switch (columnIndex) {
+            switch (col) {
                 case 0: return mySemester.getName() + " * " + mySemester.getSchool_year();
                 case 1: return dateFormat.format(regSession.getBegin_date());
                 case 2: return dateFormat.format(regSession.getExpired_date());
@@ -1552,12 +1550,12 @@ public class HomeStaff extends JFrame {
 
         @Override
         public int getColumnCount() {
-            return 8;
+            return 9;
         }
 
         @Override
-        public String getColumnName(int column) {
-            switch (column) {
+        public String getColumnName(int col) {
+            switch (col) {
                 case 0: return "Mã môn";
                 case 1: return "Tên môn";
                 case 2: return "Số tín chỉ";
@@ -1565,16 +1563,17 @@ public class HomeStaff extends JFrame {
                 case 4: return "Phòng học";
                 case 5: return "Thời gian";
                 case 6: return "Slot tối đa";
-                case 7: return "";
+                case 7:
+                case 8: return "";
             }
             return null;
         }
 
         @Override
-        public Object getValueAt(int rowIndex, int columnIndex) {
-            final Course course = courses.get(rowIndex);
+        public Object getValueAt(int row, int col) {
+            final Course course = courses.get(row);
             Subject mySubject = course.getSubject();
-            switch (columnIndex) {
+            switch (col) {
                 case 0: return mySubject.getSubject_number();
                 case 1: return mySubject.getSubject_name();
                 case 2: return mySubject.getCredit_amount();
@@ -1583,6 +1582,7 @@ public class HomeStaff extends JFrame {
                 case 5: return course.getDate_of_week().getDate() + " * " + course.getShift().getShift_time();
                 case 6: return course.getMax_slot();
                 case 7: return "DELETE";
+                case 8: return "DETAIL";
             }
             return null;
         }
@@ -1599,6 +1599,7 @@ public class HomeStaff extends JFrame {
                 case 6:
                     return false;
                 case 7:
+                case 8:
                     return true;
             }
             return false;
@@ -1629,21 +1630,21 @@ public class HomeStaff extends JFrame {
         // STAFF
         staffTable = new JTable();
         staffPane = new JScrollPane(staffTable);
-        staffPane.setPreferredSize(new Dimension(1024, 600));
+        staffPane.setPreferredSize(new Dimension(1280, 600));
         staffTable.setFont(new Font(Font.SERIF, Font.PLAIN, 18));
         staffTable.getTableHeader().setFont(new Font(Font.SERIF, Font.BOLD, 20));
         staffTable.setFillsViewportHeight(true);
 
         subjectTable = new JTable();
         subjectPane = new JScrollPane(subjectTable);
-        subjectPane.setPreferredSize(new Dimension(1024, 600));
+        subjectPane.setPreferredSize(new Dimension(1280, 600));
         subjectTable.setFont(new Font(Font.SERIF, Font.PLAIN, 18));
         subjectTable.getTableHeader().setFont(new Font(Font.SERIF, Font.BOLD, 20));
         subjectTable.setFillsViewportHeight(true);
 
         semesterTable = new JTable();
         semesterPane = new JScrollPane(semesterTable);
-        semesterPane.setPreferredSize(new Dimension(1024, 600));
+        semesterPane.setPreferredSize(new Dimension(1280, 600));
         semesterTable.setFont(new Font(Font.SERIF, Font.PLAIN, 18));
         semesterTable.getTableHeader().setFont(new Font(Font.SERIF, Font.BOLD, 20));
         semesterTable.setFillsViewportHeight(true);
@@ -1654,21 +1655,21 @@ public class HomeStaff extends JFrame {
 
         classTable = new JTable();
         classPane = new JScrollPane(classTable);
-        classPane.setPreferredSize(new Dimension(1024, 600));
+        classPane.setPreferredSize(new Dimension(1280, 600));
         classTable.setFont(new Font(Font.SERIF, Font.PLAIN, 18));
         classTable.getTableHeader().setFont(new Font(Font.SERIF, Font.BOLD, 20));
         classTable.setFillsViewportHeight(true);
 
         studentTable = new JTable();
         studentPane = new JScrollPane(studentTable);
-        studentPane.setPreferredSize(new Dimension(1024, 600));
+        studentPane.setPreferredSize(new Dimension(1280, 600));
         studentTable.setFont(new Font(Font.SERIF, Font.PLAIN, 18));
         studentTable.getTableHeader().setFont(new Font(Font.SERIF, Font.BOLD, 20));
         studentTable.setFillsViewportHeight(true);
 
         regTable = new JTable();
         regPane = new JScrollPane(regTable);
-        regPane.setPreferredSize(new Dimension(1024, 600));
+        regPane.setPreferredSize(new Dimension(1280, 600));
         regTable.setFont(new Font(Font.SERIF, Font.PLAIN, 18));
         regTable.getTableHeader().setFont(new Font(Font.SERIF, Font.BOLD, 20));
         regTable.setFillsViewportHeight(true);
@@ -1678,9 +1679,9 @@ public class HomeStaff extends JFrame {
 
         courseTable = new JTable();
         coursePane = new JScrollPane(courseTable);
-        coursePane.setPreferredSize(new Dimension(1024, 600));
-        courseTable.setFont(new Font(Font.SERIF, Font.PLAIN, 18));
-        courseTable.getTableHeader().setFont(new Font(Font.SERIF, Font.BOLD, 20));
+        coursePane.setPreferredSize(new Dimension(1280, 600));
+        courseTable.setFont(new Font(Font.SERIF, Font.PLAIN, 14));
+        courseTable.getTableHeader().setFont(new Font(Font.SERIF, Font.BOLD, 16));
         courseTable.setFillsViewportHeight(true);
     }
 }

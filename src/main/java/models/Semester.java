@@ -100,7 +100,7 @@ public class Semester implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Semester semester = (Semester) o;
-        return semester_id == semester.semester_id && Objects.equals(name, semester.name) && Objects.equals(school_year, semester.school_year) && Objects.equals(start_date, semester.start_date) && Objects.equals(end_date, semester.end_date);
+        return semester_id == semester.semester_id;
     }
 
     @Override

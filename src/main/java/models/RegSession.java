@@ -73,7 +73,7 @@ public class RegSession implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RegSession that = (RegSession) o;
-        return session_id == that.session_id && Objects.equals(begin_date, that.begin_date) && Objects.equals(expired_date, that.expired_date);
+        return session_id == that.session_id;
     }
 
     @Override
