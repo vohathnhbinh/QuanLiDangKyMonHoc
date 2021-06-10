@@ -284,8 +284,7 @@ public class HomeStaff extends JFrame {
         dialog = new AccountSetting(user);
 
         // STAFF
-        staffModel = new staffTableModel();
-        staffModel.setUser(user);
+        staffModel = new staffTableModel(user);
         staffTable.setModel(staffModel);
         ButtonColumn buttonColumn1 = new ButtonColumn(staffTable, updateStaff, 2);
         ButtonColumn buttonColumn2 = new ButtonColumn(staffTable, deleteStaff, 3);
@@ -314,6 +313,7 @@ public class HomeStaff extends JFrame {
                 super.windowClosed(e);
                 getFrame().revalidate();
                 getFrame().repaint();
+                welcome.setText("Chào mừng " + user.getFullname());
             }
         });
 
@@ -1006,8 +1006,14 @@ public class HomeStaff extends JFrame {
         private List<Staff> staffs;
         private Staff user;
 
-        public staffTableModel() {
+        public void setUser(Staff user) {
+            this.user = user;
+        }
+
+        public staffTableModel(Staff user) {
             staffs = StaffDao.getAll();
+            this.user = user;
+            this.staffs.remove(user);
         }
 
         public staffTableModel(List<Staff> staffs) {
@@ -1020,10 +1026,6 @@ public class HomeStaff extends JFrame {
 
         public List<Staff> getStaffs() {
             return staffs;
-        }
-
-        public void setUser(Staff user) {
-            this.user = user;
         }
 
         @Override
