@@ -12,6 +12,7 @@ import org.hibernate.query.Query;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class StudentDao {
     private static List<Student> students = null;
@@ -149,25 +150,14 @@ public class StudentDao {
         return "Hủy đăng ký học phần thành công";
     }
 
-    public static List<Student> searchStudent(String student_number, String fullname) {
-        Transaction trans = null;
-        try {
-            Session ss = (Session) HibernateUtil.getSessionFactory().openSession();
-            trans = ss.beginTransaction();
-            String hql = "FROM Student " +
-                    "WHERE (LOWER(student_number) LIKE :student_number) OR" +
-                    "(LOWER(fullname) LIKE :fullname)";
-            Query query = ss.createQuery(hql);
-            query.setParameter("student_number", '%' + student_number.toLowerCase() + '%');
-            query.setParameter("fullname", '%' + fullname.toLowerCase() + '%');
-            students = query.list();
-            trans.commit();
-            ss.close();
-        } catch (HibernateError err) {
-            trans.rollback();
-            System.err.println(err);
-        }
-        return students;
+    public static List<Student> searchStudent(String info, List<Student> theirStudents) {
+        String criteria = ".*" + info + ".*";
+        List<Student> newStudents;
+        newStudents = theirStudents.stream()
+                .filter(student -> student.getStudent_number().contains(info)
+                        || student.getFullname().contains(info))
+                .collect(Collectors.toList());
+        return newStudents;
     }
 
     public static Student logIn(String username, String password) {

@@ -88,9 +88,9 @@ public class DetailStudent extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String searchInfo = searchCourseTextField.getText();
-                List<Course> courses = CourseDao.searchCourse(searchInfo);
+                List<Course> courses = CourseDao.searchCourse(searchInfo, originalCourses);
                 if (courses.isEmpty())
-                    JOptionPane.showMessageDialog(getDialog(), "Không tìm học phần!");
+                    JOptionPane.showMessageDialog(getDialog(), "Không tìm thấy học phần!");
                 courseModel.setCourses(courses);
                 courseModel.changeData();
             }

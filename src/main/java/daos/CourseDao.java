@@ -87,30 +87,19 @@ public class CourseDao {
         }
     }
 
-    public static List<Course> searchCourse(String info) {
-        Transaction trans = null;
+    public static List<Course> searchCourse(String info, List<Course> theirCourses) {
         List<Course> newCourses = null;
-        try {
-            Session ss = (Session) HibernateUtil.getSessionFactory().openSession();
-            trans = ss.beginTransaction();
-            courses = CourseDao.getAll();
-            String criteria = ".*" + info + ".*";
-            newCourses = courses.stream()
-                    .filter(course -> course.getSubject().getSubject_number().matches(criteria)
-                    || course.getSubject().getSubject_name().matches(criteria)
-                    || course.getSubject().getCredit_amount() == myParseInt(info)
-                    || course.getTeacher().getTeacher_name().matches(criteria)
-                    || course.getClassroom().matches(criteria)
-                    || course.getDate_of_week().getDate().matches(criteria)
-                    || course.getShift().getShift_time().matches(criteria))
-                    .collect(Collectors.toList());
+        String criteria = ".*" + info + ".*";
+        newCourses = theirCourses.stream()
+                .filter(course -> course.getSubject().getSubject_number().matches(criteria)
+                        || course.getSubject().getSubject_name().matches(criteria)
+                        || course.getSubject().getCredit_amount() == myParseInt(info)
+                        || course.getTeacher().getTeacher_name().matches(criteria)
+                        || course.getClassroom().matches(criteria)
+                        || course.getDate_of_week().getDate().matches(criteria)
+                        || course.getShift().getShift_time().matches(criteria))
+                .collect(Collectors.toList());
 
-            trans.commit();
-            ss.close();
-        } catch (HibernateError err) {
-            trans.rollback();
-            System.err.println(err);
-        }
         return newCourses;
     }
 }

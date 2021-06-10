@@ -325,6 +325,7 @@ public class HomeStaff extends JFrame {
                 List<Staff> staffs = StaffDao.searchStaff(searchInfo, searchInfo);
                 if (staffs.isEmpty())
                     JOptionPane.showMessageDialog(getFrame(), "Không tìm thấy giáo vụ!");
+                staffs.remove(user);
                 staffModel.setStaffs(staffs);
                 staffModel.changeData();
             }
@@ -364,6 +365,7 @@ public class HomeStaff extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 List<Staff> staffs = StaffDao.getAll();
+                staffs.remove(user);
                 staffModel.setStaffs(staffs);
                 staffModel.changeData();
             }
@@ -727,7 +729,7 @@ public class HomeStaff extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String searchInfo = searchStudentTextField.getText();
-                List<Student> students = StudentDao.searchStudent(searchInfo, searchInfo);
+                List<Student> students = StudentDao.searchStudent(searchInfo, StudentDao.getAll());
                 if (students.isEmpty())
                     JOptionPane.showMessageDialog(getFrame(), "Không tìm thấy sinh viên!");
                 studentModel.setStudents(students);
@@ -957,8 +959,8 @@ public class HomeStaff extends JFrame {
                     return;
                 }
                 int max_slot = SubjectDao.myParseInt(slot);
-                if (max_slot < 20 || max_slot > 120) {
-                    JOptionPane.showMessageDialog(getFrame(), "Hãy nhập slot tối đa phù hợp (20 <= x <= 120)!");
+                if (max_slot < 10 || max_slot > 120) {
+                    JOptionPane.showMessageDialog(getFrame(), "Hãy nhập slot tối đa phù hợp (10 <= x <= 120)!");
                     return;
                 }
                 List<Course> courses = CourseDao.getAll();
@@ -982,7 +984,7 @@ public class HomeStaff extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String searchInfo = searchCourseTextField.getText();
-                List<Course> courses = CourseDao.searchCourse(searchInfo);
+                List<Course> courses = CourseDao.searchCourse(searchInfo, CourseDao.getAll());
                 if (courses.isEmpty())
                     JOptionPane.showMessageDialog(getFrame(), "Không tìm thấy học phần!");
                 courseModel.setCourses(courses);

@@ -34,6 +34,7 @@ public class HomeStudent extends JFrame{
 
     private courseTableModel myCoursesModel;
     private courseTableModel coursesModel;
+    private boolean isOutOfTime = true;
 
     public HomeStudent(final Student user) {
         this.setContentPane(mainPanel);
@@ -90,29 +91,30 @@ public class HomeStudent extends JFrame{
             }
         };
 
-        myCoursesPane.setVisible(false);
         coursesPane.setVisible(false);
-        
+        myCoursesPane.setVisible(true);
+
         Date todayDate = new Date();
         List<RegSession> regSessions = RegSessionDao.getAll();
         for (RegSession regSession : regSessions) {
             if (todayDate.after(regSession.getBegin_date()) && todayDate.before(regSession.getExpired_date())) {
                 currentSession = regSession;
-                myCoursesPane.setVisible(true);
                 coursesPane.setVisible(true);
                 isRegisterLabel.setText("");
+                isOutOfTime = false;
                 break;
             }
         }
+        Set<Student_Course> theirCourses = user.getCourses();
+        List<Course> studentCourses = new ArrayList<>();
+        for (Student_Course studentCourse : theirCourses) {
+            studentCourses.add(studentCourse.getCourse());
+        }
+        myCoursesModel = new courseTableModel(studentCourses);
+        myCoursesModel.setMine(true);
+        myCoursesModel.setOutOfTime(isOutOfTime);
+        myCoursesTable.setModel(myCoursesModel);
         if (currentSession != null) {
-            Set<Student_Course> theirCourses = user.getCourses();
-            List<Course> studentCourses = new ArrayList<>();
-            for (Student_Course studentCourse : theirCourses) {
-                studentCourses.add(studentCourse.getCourse());
-            }
-            myCoursesModel = new courseTableModel(studentCourses);
-            myCoursesModel.setMine(true);
-            myCoursesTable.setModel(myCoursesModel);
             ButtonColumn buttonColumn1 = new ButtonColumn(myCoursesTable, quitCourse, 7);
 
             List<Course> theseCourses = CourseDao.getAll();
@@ -162,6 +164,7 @@ public class HomeStudent extends JFrame{
     class courseTableModel extends AbstractTableModel {
         private java.util.List<Course> courses;
         private boolean isMine;
+        private boolean isOutOfTime;
 
         public courseTableModel() {
             courses = CourseDao.getAll();
@@ -174,6 +177,8 @@ public class HomeStudent extends JFrame{
         public void setCourses(java.util.List<Course> courses) {
             this.courses = courses;
         }
+
+        public void setOutOfTime(boolean isOutOfTime) { this.isOutOfTime = isOutOfTime;}
 
         public List<Course> getCourses() {
             return courses;
@@ -220,7 +225,7 @@ public class HomeStudent extends JFrame{
                 case 4: return course.getClassroom();
                 case 5: return course.getDate_of_week().getDate() + " * " + course.getShift().getShift_time();
                 case 6: return course.getStudents().size() + "/" + course.getMax_slot();
-                case 7: return isMine ? "QUIT" : "JOIN";
+                case 7: return !isOutOfTime ? (isMine ? "QUIT" : "JOIN") : "";
             }
             return null;
         }
@@ -240,7 +245,7 @@ public class HomeStudent extends JFrame{
                 case 6:
                     return false;
                 case 7:
-                    return currentSize < maxSize;
+                    return currentSize < maxSize && !isOutOfTime;
             }
             return false;
         }
