@@ -28,6 +28,7 @@ public class DetailCourse extends JDialog {
     private JButton resetStudentButton;
     private JScrollPane studentPane;
     private JTable studentTable;
+    private JLabel studentLabel;
     private courseTableModel courseModel;
     private studentTableModel studentModel;
     private List<Student> originalStudents = new ArrayList<>();
@@ -95,7 +96,7 @@ public class DetailCourse extends JDialog {
     private void createUIComponents() {
         // TODO: place custom component creation code here
         topPane = new JScrollPane(currentCourseTable);
-        topPane.setPreferredSize(new Dimension(1280, 100));
+        topPane.setPreferredSize(new Dimension(1280, 200));
         currentCourseTable = new JTable();
         currentCourseTable.setFont(new Font(Font.SERIF, Font.PLAIN, 14));
         currentCourseTable.getTableHeader().setFont(new Font(Font.SERIF, Font.BOLD, 16));

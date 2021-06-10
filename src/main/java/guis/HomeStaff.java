@@ -189,6 +189,7 @@ public class HomeStaff extends JFrame {
     private JTable studentTable;
     private JPanel funkyshitStudentPanel;
     private JDialog dialogStudent;
+    private JDialog dialogDetailStudent;
     private studentTableModel studentModel;
 
     Action updateStudent = new AbstractAction() {
@@ -202,6 +203,19 @@ public class HomeStaff extends JFrame {
             dialogStudent.setModal(true);
             dialogStudent.setVisible(true);
             studentModel.update(student);
+        }
+    };
+
+    Action detailStudent = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int modelRow = Integer.valueOf(e.getActionCommand());
+            List<Student> students = studentModel.getStudents();
+            Student student = students.get(modelRow);
+
+            dialogDetailStudent = new DetailStudent(student, currentSemester);
+            dialogDetailStudent.setModal(true);
+            dialogDetailStudent.setVisible(true);
         }
     };
 
@@ -590,6 +604,15 @@ public class HomeStaff extends JFrame {
                     JOptionPane.showMessageDialog(getFrame(), "Hãy chọn năm học!");
                     return;
                 }
+                List<Semester> semesters = SemesterDao.getAll();
+                for (Semester thisSemester : semesters) {
+                    if (school_year.equals(thisSemester.getSchool_year())) {
+                        if (semester_name.equals(thisSemester.getName())) {
+                            JOptionPane.showMessageDialog(getFrame(), "Học kì đã tồn tại!");
+                            return;
+                        }
+                    }
+                }
                 Semester semester = new Semester();
                 semester.setName(semester_name);
                 semester.setSchool_year(school_year);
@@ -654,6 +677,7 @@ public class HomeStaff extends JFrame {
                     studentModel = new studentTableModel();
                     studentTable.setModel(studentModel);
                     ButtonColumn buttonColumn8 = new ButtonColumn(studentTable, updateStudent, 4);
+                    ButtonColumn buttonColumnX = new ButtonColumn(studentTable, detailStudent, 5);
 
                     classCombobox.addItem("Lớp học");
                     List<Class> classes = ClassDao.getAll();
@@ -937,6 +961,18 @@ public class HomeStaff extends JFrame {
                     JOptionPane.showMessageDialog(getFrame(), "Hãy nhập slot tối đa phù hợp (20 <= x <= 120)!");
                     return;
                 }
+                List<Course> courses = CourseDao.getAll();
+                for (Course thisCourse : courses) {
+                    if (Shift.getEnumByValue(shift) == thisCourse.getShift()) {
+                        if (Date_of_week.getEnumByValue(dateOfWeek) == thisCourse.getDate_of_week()) {
+                            if (classroom.equals(thisCourse.getClassroom())) {
+                                JOptionPane.showMessageDialog(getFrame(), "Trùng phòng học!");
+                                return;
+                            }
+                        }
+                    }
+                }
+
                 Course course = new Course(currentSemester, subject, teacher, classroom, Date_of_week.getEnumByValue(dateOfWeek), Shift.getEnumByValue(shift), max_slot);
                 courseModel.add(course);
                 courseModel.changeData();
@@ -1382,7 +1418,7 @@ public class HomeStaff extends JFrame {
 
         @Override
         public int getColumnCount() {
-            return 5;
+            return 6;
         }
 
         @Override
@@ -1392,7 +1428,8 @@ public class HomeStaff extends JFrame {
                 case 1: return "Họ tên";
                 case 2: return "Giới tính";
                 case 3: return "Lớp";
-                case 4: return "";
+                case 4:
+                case 5: return "";
             }
             return null;
         }
@@ -1406,6 +1443,7 @@ public class HomeStaff extends JFrame {
                 case 2: return student.getGender() == Gender.MALE ? "NAM" : "NỮ";
                 case 3: return student.getMyClass().getClass_name();
                 case 4: return "EDIT";
+                case 5: return "DETAIL";
             }
             return null;
         }
@@ -1419,6 +1457,7 @@ public class HomeStaff extends JFrame {
                 case 3:
                     return false;
                 case 4:
+                case 5:
                     return true;
             }
             return false;

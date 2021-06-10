@@ -6,7 +6,7 @@ public enum Date_of_week {
     WED("Thứ 4"),
     THU("Thứ 5"),
     FRI("Thứ 6"),
-    AT("Thứ 7"),
+    SAT("Thứ 7"),
     SUN("Chủ nhật");
 
     private String date;
